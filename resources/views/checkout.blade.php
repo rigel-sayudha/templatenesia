@@ -130,7 +130,6 @@
                             </div>
                         </label>
 
-                        <!-- Midtrans Automatic Option -->
                         <label class="flex-1 border-2 rounded-lg p-4 cursor-pointer transition" :class="form.paymentMethod === 'midtrans' ? 'border-iosBlue bg-blue-50' : 'border-gray-300'">
                             <div class="flex items-center gap-3">
                                 <input 
@@ -145,9 +144,7 @@
                                 </div>
                             </div>
                         </label>
-                    </div>
-
-                    <!-- Bank Selection for Manual Payment Methods -->
+ 
                     @if($manualPaymentMethods->count() > 0)
                         <div x-show="form.paymentMethod === 'manual'" x-transition class="space-y-3">
                             @foreach($manualPaymentMethods as $method)
@@ -188,12 +185,10 @@
 
             </div>
 
-            <!-- Right Column: Order Summary -->
             <div class="lg:col-span-1">
                 <div class="bg-white rounded-lg p-6 sticky top-32">
                     <h3 class="text-lg font-bold mb-6 underline-accent">Ringkasan Pesanan</h3>
-                    
-                    <!-- Voucher Section -->
+
                     <div class="flex gap-2 mb-6">
                         <input 
                             type="text" 
@@ -205,7 +200,6 @@
                         </button>
                     </div>
 
-                    <!-- Pricing -->
                     <div class="space-y-3 mb-4">
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-600">Harga Normal:</span>
@@ -222,7 +216,6 @@
                         <span class="text-2xl font-bold text-iosBlue" x-text="formatPrice(product.price)"></span>
                     </div>
 
-                    <!-- Terms -->
                     <label class="flex items-start gap-3 cursor-pointer text-xs text-gray-600 mb-6">
                         <input 
                             type="checkbox" 

@@ -327,7 +327,6 @@ Mohon transfer dan kirimkan bukti transfer untuk verifikasi cepat.
         }
     }
 </script>
-@endsection
             </div>
         </div>
     </div>

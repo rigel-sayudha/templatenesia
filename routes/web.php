@@ -36,6 +36,16 @@ Route::get('/payment', [PageController::class, 'payment'])->name('payment');
 Route::post('/checkout', [\App\Http\Controllers\CheckoutController::class, 'checkout'])->name('checkout');
 Route::post('/webhook/payment', [\App\Http\Controllers\CheckoutController::class, 'webhook'])->name('webhook.payment');
 
+// Simple user orders page (shows orders for current session invoice)
+Route::get('/orders', function () {
+	$invoice = session('invoice_id');
+	$orders = [];
+	if ($invoice) {
+		$orders = \App\Models\Order::where('invoice_id', $invoice)->get();
+	}
+	return view('orders', ['orders' => $orders]);
+})->name('orders');
+
 Route::get('/dev/webhook/payment', function () {
 	$invoice = request('invoice_id');
 	$status = request('status', 'paid');

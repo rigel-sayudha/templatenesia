@@ -118,7 +118,6 @@ class CheckoutController extends Controller
             return response()->json(['ok' => false, 'message' => 'order not found'], 404);
         }
 
-        // Update order status
         $order->status = $status;
         $order->save();
 
@@ -141,7 +140,14 @@ class CheckoutController extends Controller
             }
         }
 
-        return response()->json(['ok' => true]);
+        // If the request expects JSON (API / Livewire / gateway), return JSON.
+        if ($request->wantsJson() || $request->header('x-livewire')) {
+            return response()->json(['ok' => true]);
+        }
+
+        // For browser form submissions (debug simulator), redirect to homepage with flash message
+        session()->flash('status', 'Pembayaran telah diterima. Terima kasih.');
+        return redirect()->route('home');
     }
 }
 
