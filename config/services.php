@@ -35,4 +35,15 @@ return [
         ],
     ],
 
+        'fonntee' => [
+            'url' => env('FONNTEE_API_URL'),
+            'key' => env('FONNTEE_API_KEY'),
+        ],
+
+        'fonnte' => [
+            'username' => env('FONNTE_USERNAME'),
+            'password' => env('FONNTE_PASSWORD'),
+            'admin_phone' => env('FONNTE_ADMIN_PHONE'),
+        ],
+
 ];
