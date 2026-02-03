@@ -1,0 +1,41 @@
+/* Combined inline styles migrated from Homepage.html, Detail Produk.html, Pembayaran.html */
+/* Body / base */
+body { background-color: #F5F5F7; color: #1D1D1F; -webkit-font-smoothing: antialiased; }
+[x-cloak] { display: none !important; }
+
+/* Scrollbar hide helper */
+.hide-scroll::-webkit-scrollbar { display: none; }
+.hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Glass header / effects */
+.glass-header { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.05); }
+.glass-effect { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,0,0,0.05); }
+
+/* Homepage marquee animation */
+@keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.animate-scroll { display: flex; width: max-content; animation: scroll-left 40s linear infinite; }
+.animate-scroll:hover { animation-play-state: paused; }
+
+/* Transition helpers used by Vue/Alpine lists */
+.list-enter-active, .list-leave-active { transition: all 0.5s ease; }
+.list-enter-from, .list-leave-to { opacity: 0; transform: translateY(20px); }
+
+/* Detail Produk helpers */
+html { scroll-padding-bottom: 140px; scroll-padding-top: 100px; }
+.bg-pattern { background-image: radial-gradient(#007AFF 1px, transparent 1px); background-size: 8px 8px; }
+
+@keyframes bouncy-button { 0%, 100% { transform: translateY(0); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); } 50% { transform: translateY(-3px); box-shadow: 0 15px 20px -5px rgba(0, 122, 255, 0.3); } }
+.btn-bouncy { background: linear-gradient(135deg, #1D1D1F 0%, #007AFF 100%); background-size: 200% 200%; animation: bouncy-button 3s infinite ease-in-out; border: 1px solid rgba(255,255,255,0.2); }
+
+@keyframes arrow-jump { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+.icon-jump { display: inline-block; animation: arrow-jump 1s infinite ease-in-out; }
+.btn-bouncy:hover { animation-play-state: paused; transform: translateY(-2px); filter: brightness(1.1); }
+
+/* Small utilities */
+.shadow-soft { box-shadow: 0 8px 30px rgba(0,0,0,0.04); }
+.shadow-glow { box-shadow: 0 0 20px rgba(0, 122, 255, 0.12); }
+
+/* Printing helpers (kept from original payment/print flows) */
+@media print { .no-print { display: none !important; } }
+
+/* End of templatenesia combined CSS */
