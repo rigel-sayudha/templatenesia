@@ -18,7 +18,6 @@ class CheckoutController extends Controller
 {
     public function checkout(Request $request, MidtransService $midtrans, WhatsAppService $wa)
     {
-        // Get valid bank codes for manual payment methods
         $validBankCodes = PaymentMethod::where('type', 'manual')->where('is_active', 1)->pluck('bank_code')->toArray();
         
         $validated = $request->validate([
@@ -36,7 +35,7 @@ class CheckoutController extends Controller
         $phone = $validated['phone'];
         $email = $validated['email'];
         $name = $validated['name'];
-        $paymentMethod = $validated['paymentMethod'];  // 'manual' or 'midtrans'
+        $paymentMethod = $validated['paymentMethod']; 
         $bankCode = $validated['bankCode'] ?? null;
 
         $product = Product::find($productId);
@@ -140,12 +139,10 @@ class CheckoutController extends Controller
             }
         }
 
-        // If the request expects JSON (API / Livewire / gateway), return JSON.
         if ($request->wantsJson() || $request->header('x-livewire')) {
             return response()->json(['ok' => true]);
         }
 
-        // For browser form submissions (debug simulator), redirect to homepage with flash message
         session()->flash('status', 'Pembayaran telah diterima. Terima kasih.');
         return redirect()->route('home');
     }

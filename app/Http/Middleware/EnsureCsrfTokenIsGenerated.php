@@ -15,8 +15,6 @@ class EnsureCsrfTokenIsGenerated
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Force generation of CSRF token by accessing csrf_token() helper
-        // This ensures the _token is stored in the session before view rendering
         csrf_token();
         
         return $next($request);

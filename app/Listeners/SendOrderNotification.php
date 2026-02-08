@@ -19,9 +19,6 @@ class SendOrderNotification implements ShouldQueue
         protected FontteWhatsappService $whatsappService,
     ) {}
 
-    /**
-     * Handle the event.
-     */
     public function handle(OrderCreated $event): void
     {
         try {

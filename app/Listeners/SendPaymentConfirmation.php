@@ -25,14 +25,11 @@ class SendPaymentConfirmation implements ShouldQueue
     public function handle(OrderPaid $event): void
     {
         try {
-            // Send payment confirmation to customer via WhatsApp
             $event->model->notify(new OrderPaidNotification($event->model));
 
-            // Send payment confirmation email
             Mail::to($event->model->customer_email)
                 ->send(new PaymentConfirmationMail($event->model));
 
-            // Send admin WhatsApp notification
             $adminMessage = "✅ *Pembayaran Diterima*\n\n";
             $adminMessage .= "Invoice: {$event->model->invoice_id}\n";
             $adminMessage .= "Customer: {$event->model->customer_name}\n";
