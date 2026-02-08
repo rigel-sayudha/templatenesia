@@ -30,13 +30,11 @@ Route::get('/test-csrf', [\App\Http\Controllers\TestCsrfController::class, 'test
 Route::get('/test-livewire-modal', [\App\Http\Controllers\TestCsrfController::class, 'testLivewireModal']);
 Route::get('/product', [PageController::class, 'product'])->name('product');
 Route::get('/checkout', [PageController::class, 'checkout'])->name('checkout');
-Route::get('/payment', [PageController::class, 'payment'])->name('payment');
 
 
 Route::post('/checkout', [\App\Http\Controllers\CheckoutController::class, 'checkout'])->name('checkout');
 Route::post('/webhook/payment', [\App\Http\Controllers\CheckoutController::class, 'webhook'])->name('webhook.payment');
 
-// Simple user orders page (shows orders for current session invoice)
 Route::get('/orders', function () {
 	$invoice = session('invoice_id');
 	$orders = [];

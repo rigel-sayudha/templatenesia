@@ -22,7 +22,6 @@
 <!-- Header Topbar -->
 <header class="fixed top-0 w-full z-50 glass-header transition-all duration-300">
     <div class="max-w-screen-xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-center relative">
-        <!-- Logo di kiri -->
         <a href="/" class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition absolute left-4 sm:left-6">
             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjRzyTdfjkBugSP3Ew_vmkaeMQKl0XnZVR83kFV0LtKJXC4gVF_WTGPS57iCampIjdlGU09l_Ct0hw_2Tx51GiHj5uWr6fTYqzJirf8qpAKhwW0AsM-pYcam74_l25KpFvShEYQdkJ-UnuJQsuiP7qa7Ek85k0MWaF0X0pHGmJZ2imL8IQK9ip5M9s2sW0/s16000/Templatenesia%20Logo.jpg" 
                  class="w-10 h-10 rounded-lg object-cover shadow-sm" alt="Templatenesia Logo">
@@ -31,7 +30,6 @@
             </div>
         </a>
 
-        <!-- Navigation Menu di Tengah -->
         <nav class="hidden md:flex items-center gap-8">
             <a href="/" class="text-slate-900 hover:text-iosBlue font-semibold text-sm transition-colors">
                 <i class="ri-home-line mr-2"></i>Beranda
@@ -44,7 +42,6 @@
             </a>
         </nav>
 
-        <!-- Button di kanan -->
         <a href="https://wa.me/6287751299911" target="_blank" class="flex items-center gap-2 bg-slate-900 hover:bg-iosBlue text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95 absolute right-4 sm:right-6">
             <i class="ri-whatsapp-line text-lg"></i>
             <span class="hidden sm:inline">Hubungi Admin</span>
@@ -55,7 +52,114 @@
 <div class="min-h-screen bg-gray-50 py-8 pt-32">
     <div x-data="checkoutApp()" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <form @submit.prevent="processCheckout" class="space-y-6">
+        <!-- Payment Success Modal/Section -->
+        <div x-show="paymentSuccess" x-transition class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
+                    <h2 class="text-2xl font-bold text-gray-900">Konfirmasi Pesanan</h2>
+                    <button @click="resetForm()" class="text-gray-400 hover:text-gray-600">
+                        <i class="ri-close-line text-2xl"></i>
+                    </button>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    <!-- Success Header -->
+                    <div class="text-center py-4">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+                            <i class="ri-check-line text-3xl text-green-600"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Pesanan Berhasil Dibuat!</h3>
+                        <p class="text-gray-600">Invoice: <span class="font-semibold text-gray-900" x-text="paymentData.invoice"></span></p>
+                    </div>
+
+                    <!-- Order Details -->
+                    <div class="bg-gray-50 rounded-lg p-4 space-y-3">
+                        <h4 class="font-semibold text-gray-900 mb-3">Detail Pesanan</h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Nama:</span>
+                                <span class="font-medium text-gray-900" x-text="form.name"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Email:</span>
+                                <span class="font-medium text-gray-900" x-text="form.email"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Telepon:</span>
+                                <span class="font-medium text-gray-900" x-text="form.phone"></span>
+                            </div>
+                            <div class="border-t pt-2 mt-2 flex justify-between font-semibold">
+                                <span class="text-gray-900">Total:</span>
+                                <span class="text-iosBlue text-lg" x-text="formatPrice(paymentData.total)"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Manual Transfer Details -->
+                    <div x-show="form.paymentMethod === 'manual'" x-transition class="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 space-y-3">
+                        <h4 class="font-semibold text-gray-900 mb-3">
+                            <i class="ri-bank-card-line mr-2"></i>Detail Rekening Bank
+                        </h4>
+                        <div class="space-y-3 text-sm">
+                            <div>
+                                <p class="text-gray-600 text-xs mb-1">Bank</p>
+                                <p class="font-semibold text-blue-600" x-text="paymentData.bankName"></p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600 text-xs mb-1">Nomor Rekening</p>
+                                <p class="font-mono font-bold text-gray-900 text-lg" x-text="paymentData.bankAccount"></p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600 text-xs mb-1">Atas Nama</p>
+                                <p class="font-semibold text-gray-900" x-text="paymentData.accountName"></p>
+                            </div>
+                            <div class="bg-white rounded p-3 mt-4">
+                                <p class="text-gray-600 text-xs mb-2 font-semibold">Jumlah Transfer:</p>
+                                <p class="text-2xl font-bold text-iosBlue" x-text="formatPrice(paymentData.total)"></p>
+                            </div>
+                        </div>
+
+                        <!-- Transfer Instructions -->
+                        <div class="mt-6 pt-6 border-t border-blue-200">
+                            <h5 class="font-semibold text-gray-900 mb-3">Langkah-langkah:</h5>
+                            <ol class="list-decimal list-inside space-y-2 text-sm text-gray-700">
+                                <li>Transfer jumlah sesuai nominal ke rekening di atas</li>
+                                <li>Simpan bukti transfer (screenshot/foto)</li>
+                                <li>Kirim bukti pembayaran ke WhatsApp admin</li>
+                                <li>Tunggu konfirmasi admin dalam waktu 1x24 jam</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- Midtrans Details -->
+                    <div x-show="form.paymentMethod === 'midtrans'" x-transition class="bg-purple-50 border-2 border-purple-200 rounded-lg p-4 space-y-3">
+                        <h4 class="font-semibold text-gray-900 mb-3">
+                            <i class="ri-credit-card-line mr-2"></i>Pembayaran melalui Midtrans
+                        </h4>
+                        <p class="text-sm text-gray-700 mb-4">Pesanan Anda telah dibuat. Silakan lakukan pembayaran melalui tombol di bawah.</p>
+                        <div x-show="paymentData.paymentUrl">
+                            <a :href="paymentData.paymentUrl" target="_blank" class="block w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded text-center transition">
+                                <i class="ri-external-link-line mr-2"></i>Lanjutkan Pembayaran
+                            </a>
+                            <p class="text-xs text-gray-600 text-center mt-2">Anda akan diarahkan ke halaman pembayaran Midtrans</p>
+                        </div>
+                        <div x-show="!paymentData.paymentUrl" class="bg-red-50 border border-red-200 rounded p-3">
+                            <p class="text-sm text-red-700"><i class="ri-alert-line mr-2"></i>Terjadi kesalahan saat membuat transaksi Midtrans. Silakan hubungi admin untuk bantuan.</p>
+                        </div>
+                    </div>
+
+                    <!-- Admin Contact -->
+                    <div class="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                        <p class="text-sm text-gray-700 mb-3"><i class="ri-question-line mr-2 text-iosBlue"></i><span class="font-semibold">Pertanyaan?</span> Hubungi admin kami:</p>
+                        <a href="https://wa.me/6287751299911" target="_blank" class="inline-flex items-center gap-2 bg-slate-900 hover:bg-iosBlue text-white px-4 py-2 rounded font-semibold text-sm transition">
+                            <i class="ri-whatsapp-line"></i>Hubungi Admin
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <form @submit.prevent="processCheckout" class="space-y-6" x-show="!paymentSuccess" x-transition>
             
             <!-- Top Row: Product Summary & Order Summary -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -272,6 +376,8 @@
     function checkoutApp() {
         return {
             loading: false,
+            paymentSuccess: false,
+            paymentData: {},
             product: {
                 name: '{{ $product->title ?? "Paket SOP" }}',
                 description: '{{ $product->description ?? "Admin Profile | Dukungan Lengkap | Editable" }}',
@@ -323,21 +429,14 @@
                     const data = await response.json();
                     
                     if (data.ok) {
-                        if (this.form.paymentMethod === 'midtrans' && data.paymentUrl) {
-                            // Redirect to Midtrans payment
-                            window.location.href = data.paymentUrl;
-                        } else if (this.form.paymentMethod === 'transfer') {
-                            // Show bank transfer details
-                            alert(`
-Invoice: ${data.invoice}
-Nama Bank: ${data.bankName}
-Nomor Rekening: ${data.bankAccount}
-Atas Nama: ${data.accountName}
-Jumlah: ${this.formatPrice(data.total)}
-
-Mohon transfer dan kirimkan bukti transfer untuk verifikasi cepat.
-                            `);
-                        }
+                        // Store payment data and show confirmation modal
+                        this.paymentData = data;
+                        this.paymentSuccess = true;
+                        
+                        // Auto-scroll to modal
+                        setTimeout(() => {
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }, 100);
                     } else {
                         alert('Error: ' + (data.message || 'Terjadi kesalahan'));
                     }
@@ -346,6 +445,18 @@ Mohon transfer dan kirimkan bukti transfer untuk verifikasi cepat.
                 } finally {
                     this.loading = false;
                 }
+            },
+            resetForm() {
+                this.paymentSuccess = false;
+                this.paymentData = {};
+                this.form = {
+                    name: '',
+                    email: '',
+                    phone: '',
+                    paymentMethod: 'manual',
+                    bankCode: '{{ $manualPaymentMethods->first()?->bank_code ?? "" }}',
+                    agreeTerms: false,
+                };
             }
         }
     }

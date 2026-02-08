@@ -43,7 +43,11 @@ class CheckoutController extends Controller
             return response()->json(['ok' => false, 'message' => 'Product not found'], 404);
         }
 
-        $total = ($product->price ?? 0) * $qty;
+        $sellingPrice = ($product->discount_price && $product->discount_price < $product->price) 
+            ? $product->discount_price 
+            : $product->price;
+        
+        $total = ($sellingPrice ?? 0) * $qty;
         $invoice = 'INV-' . strtoupper(Str::random(8));
 
         $order = Order::create([
@@ -99,7 +103,7 @@ class CheckoutController extends Controller
             return response()->json([
                 'ok' => true,
                 'invoice' => $invoice,
-                'paymentUrl' => $tx?->redirect_url ?? route('payment'),
+                'paymentUrl' => $tx?->redirect_url ?? null,
                 'message' => 'Redirecting to payment gateway...',
             ]);
         } else {

@@ -158,15 +158,4 @@ class PageController extends Controller
         
         return view('checkout', compact('product', 'manualPaymentMethods'));
     }
-
-    public function payment()
-    {
-        $invoiceId = session('invoice_id') ?? rand(100000, 999999);
-        $product = null;
-        if ($pid = request()->query('product_id')) {
-            $product = Product::find($pid);
-        }
-        $midtrans = session('midtrans') ?? null;
-        return view('pembayaran', compact('invoiceId','product','midtrans'));
-    }
 }
