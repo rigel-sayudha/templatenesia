@@ -39,12 +39,12 @@
 <div class="min-h-screen bg-gray-50 py-8 pt-32">
     <div x-data="checkoutApp()" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <form @submit.prevent="processCheckout" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <form @submit.prevent="processCheckout" class="space-y-6">
             
-            <!-- Left Column: Product & Form -->
-            <div class="lg:col-span-2 space-y-6">
+            <!-- Top Row: Product Summary & Order Summary -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 
-                <!-- Product Summary - Compact Horizontal -->
+                <!-- Product Summary -->
                 <div class="bg-white rounded-lg p-6 border-b-2 border-gray-200">
                     <h3 class="text-lg font-bold mb-4 underline-accent">Ringkasan Produk</h3>
                     
@@ -68,6 +68,57 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Order Summary -->
+                <div class="bg-white rounded-lg p-6 border-b-2 border-gray-200">
+                    <h3 class="text-lg font-bold mb-4 underline-accent">Ringkasan Pesanan</h3>
+
+                    <div class="flex gap-2 mb-6">
+                        <input 
+                            type="text" 
+                            placeholder="Masukan kode voucher"
+                            class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-iosBlue focus:border-transparent outline-none"
+                        >
+                        <button type="button" class="bg-iosBlue text-white px-6 py-2 rounded font-semibold text-sm hover:bg-blue-600 transition">
+                            Terapkan
+                        </button>
+                    </div>
+
+                    <div class="space-y-3 mb-4">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Harga Normal:</span>
+                            <span class="text-red-500 font-semibold line-through" x-text="formatPrice(product.oldPrice)"></span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Harga Diskon:</span>
+                            <span class="text-gray-900 font-semibold" x-text="formatPrice(product.price)"></span>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-b py-4 mb-6 flex justify-between">
+                        <span class="font-bold text-gray-900">Total:</span>
+                        <span class="text-2xl font-bold text-iosBlue" x-text="formatPrice(product.price)"></span>
+                    </div>
+
+                    <label class="flex items-start gap-3 cursor-pointer text-xs text-gray-600">
+                        <input 
+                            type="checkbox" 
+                            x-model="form.agreeTerms"
+                            class="mt-1 w-4 h-4 text-iosBlue rounded cursor-pointer"
+                            required
+                        >
+                        <span>
+                            Saya setuju dengan 
+                            <a href="#" class="text-iosBlue hover:underline font-medium">syarat dan ketentuan</a>
+                            yang berlaku
+                        </span>
+                    </label>
+                </div>
+
+            </div>
+
+            <!-- Buyer Information & Payment Method Section -->
+            <div class="space-y-6">
                 
                 <!-- Buyer Information -->
                 <div class="bg-white rounded-lg p-6">
@@ -181,67 +232,22 @@
                             <p class="text-gray-500 text-sm">Tidak ada metode transfer manual yang tersedia saat ini. Silahkan hubungi admin.</p>
                         </div>
                     @endif
-                </div>
-
-            </div>
-
-            <div class="lg:col-span-1">
-                <div class="bg-white rounded-lg p-6 sticky top-32">
-                    <h3 class="text-lg font-bold mb-6 underline-accent">Ringkasan Pesanan</h3>
-
-                    <div class="flex gap-2 mb-6">
-                        <input 
-                            type="text" 
-                            placeholder="Masukan kode voucher"
-                            class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-iosBlue focus:border-transparent outline-none"
-                        >
-                        <button type="button" class="bg-iosBlue text-white px-6 py-2 rounded font-semibold text-sm hover:bg-blue-600 transition">
-                            Terapkan
-                        </button>
-                    </div>
-
-                    <div class="space-y-3 mb-4">
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">Harga Normal:</span>
-                            <span class="text-red-500 font-semibold line-through" x-text="formatPrice(product.oldPrice)"></span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">Harga Diskon:</span>
-                            <span class="text-gray-900 font-semibold" x-text="formatPrice(product.price)"></span>
-                        </div>
-                    </div>
-
-                    <div class="border-t border-b py-4 mb-6 flex justify-between">
-                        <span class="font-bold text-gray-900">Total:</span>
-                        <span class="text-2xl font-bold text-iosBlue" x-text="formatPrice(product.price)"></span>
-                    </div>
-
-                    <label class="flex items-start gap-3 cursor-pointer text-xs text-gray-600 mb-6">
-                        <input 
-                            type="checkbox" 
-                            x-model="form.agreeTerms"
-                            class="mt-1 w-4 h-4 text-iosBlue rounded cursor-pointer"
-                            required
-                        >
-                        <span>
-                            Saya setuju dengan 
-                            <a href="#" class="text-iosBlue hover:underline font-medium">syarat dan ketentuan</a>
-                            yang berlaku
-                        </span>
-                    </label>
 
                     <!-- Submit Button -->
-                    <button 
-                        type="submit"
-                        :disabled="!form.agreeTerms || loading"
-                        class="w-full bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-full transition text-center text-sm"
-                    >
-                        <span x-show="!loading">Lanjutkan Pembayaran</span>
-                        <span x-show="loading">
-                            <i class="fa-solid fa-spinner animate-spin"></i> Memproses...
-                        </span>
-                    </button>
+                    <div class="mt-8 flex gap-4">
+                        <button 
+                            type="submit"
+                            :disabled="!form.agreeTerms || loading"
+                            class="flex-1 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition text-center text-sm"
+                        >
+                            <span x-show="!loading">Lanjutkan Pembayaran</span>
+                            <span x-show="loading">
+                                <i class="fa-solid fa-spinner animate-spin"></i> Memproses...
+                            </span>
+                        </button>
+                    </div>
                 </div>
+
             </div>
 
         </form>
