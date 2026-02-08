@@ -236,7 +236,7 @@
                     <button 
                         type="submit"
                         :disabled="!form.agreeTerms || loading"
-                        class="w-full bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition text-center text-sm mt-6"
+                        class="w-full bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-4 rounded transition text-center text-sm mt-6"
                     >
                         <span x-show="!loading">Lanjutkan Pembayaran</span>
                         <span x-show="loading">
