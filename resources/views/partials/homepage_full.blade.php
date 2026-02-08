@@ -1,5 +1,3 @@
-@php 
-
 <header class="fixed top-0 w-full z-50 glass-header transition-all duration-300">
     <div class="max-w-screen-xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-center relative">
         <!-- Logo di kiri -->
