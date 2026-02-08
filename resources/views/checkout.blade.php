@@ -100,11 +100,11 @@
                         <span class="text-2xl font-bold text-iosBlue" x-text="formatPrice(product.price)"></span>
                     </div>
 
-                    <label class="flex items-start gap-3 cursor-pointer text-xs text-gray-600">
+                    <label class="flex items-start gap-2 cursor-pointer text-xs text-gray-600 mb-5">
                         <input 
                             type="checkbox" 
                             x-model="form.agreeTerms"
-                            class="mt-1 w-4 h-4 text-iosBlue rounded cursor-pointer"
+                            class="mt-0.5 w-4 h-4 text-iosBlue rounded cursor-pointer"
                             required
                         >
                         <span>
@@ -122,36 +122,36 @@
                 
                 <!-- Buyer Information -->
                 <div class="bg-white rounded-lg p-6">
-                    <h3 class="text-lg font-bold mb-6 underline-accent">Informasi Pembeli</h3>
+                    <h3 class="text-lg font-bold mb-5 underline-accent">Informasi Pembeli</h3>
                     
-                    <div class="space-y-4">
+                    <div class="space-y-3">
                         <div>
-                            <label class="text-sm font-medium text-gray-700 mb-2 block">Nama Lengkap *</label>
+                            <label class="text-xs font-medium text-gray-700 mb-1.5 block">Nama Lengkap *</label>
                             <input 
                                 x-model="form.name" 
                                 type="text" 
                                 placeholder="Masukkan nama lengkap Anda"
-                                class="w-full px-4 py-3 border border-gray-300 rounded focus:ring-2 focus:ring-iosBlue focus:border-transparent outline-none text-sm"
+                                class="w-full px-3 py-2.5 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-iosBlue focus:border-transparent outline-none"
                                 required
                             >
                         </div>
                         <div>
-                            <label class="text-sm font-medium text-gray-700 mb-2 block">Email *</label>
+                            <label class="text-xs font-medium text-gray-700 mb-1.5 block">Email *</label>
                             <input 
                                 x-model="form.email" 
                                 type="email" 
                                 placeholder="contoh@email.com"
-                                class="w-full px-4 py-3 border border-gray-300 rounded focus:ring-2 focus:ring-iosBlue focus:border-transparent outline-none text-sm"
+                                class="w-full px-3 py-2.5 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-iosBlue focus:border-transparent outline-none"
                                 required
                             >
                         </div>
                         <div>
-                            <label class="text-sm font-medium text-gray-700 mb-2 block">Nomor Telepon *</label>
+                            <label class="text-xs font-medium text-gray-700 mb-1.5 block">Nomor Telepon *</label>
                             <input 
                                 x-model="form.phone" 
                                 type="tel" 
                                 placeholder="08xxxxxxxxxx"
-                                class="w-full px-4 py-3 border border-gray-300 rounded focus:ring-2 focus:ring-iosBlue focus:border-transparent outline-none text-sm"
+                                class="w-full px-3 py-2.5 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-iosBlue focus:border-transparent outline-none"
                                 required
                             >
                         </div>
@@ -161,49 +161,49 @@
 
                 <!-- Payment Method -->
                 <div class="bg-white rounded-lg p-6">
-                    <h3 class="text-lg font-bold mb-6 underline-accent">Metode Pembayaran</h3>
+                    <h3 class="text-lg font-bold mb-5 underline-accent">Metode Pembayaran</h3>
                     
                     <!-- 2 Fixed Payment Method Options -->
-                    <div class="flex gap-4 mb-8">
+                    <div class="grid grid-cols-2 gap-3 mb-5">
                         <!-- Transfer Manual Option -->
-                        <label class="flex-1 border-2 rounded-lg p-4 cursor-pointer transition" :class="form.paymentMethod === 'manual' ? 'border-iosBlue bg-blue-50' : 'border-gray-300'">
-                            <div class="flex items-center gap-3">
+                        <label class="border-2 rounded-lg p-3 cursor-pointer transition" :class="form.paymentMethod === 'manual' ? 'border-iosBlue bg-blue-50' : 'border-gray-300'">
+                            <div class="flex items-center gap-2">
                                 <input 
                                     type="radio" 
                                     x-model="form.paymentMethod" 
                                     value="manual"
-                                    class="w-5 h-5 text-iosBlue"
+                                    class="w-4 h-4 text-iosBlue"
                                 >
                                 <div>
-                                    <div class="font-semibold text-gray-900">Transfer Manual</div>
-                                    <div class="text-xs text-gray-500">Ke rekening bank pilihan</div>
+                                    <div class="font-medium text-gray-900 text-sm">Transfer Manual</div>
+                                    <div class="text-xs text-gray-500">Ke rekening bank</div>
                                 </div>
                             </div>
                         </label>
 
-                        <label class="flex-1 border-2 rounded-lg p-4 cursor-pointer transition" :class="form.paymentMethod === 'midtrans' ? 'border-iosBlue bg-blue-50' : 'border-gray-300'">
-                            <div class="flex items-center gap-3">
+                        <label class="border-2 rounded-lg p-3 cursor-pointer transition" :class="form.paymentMethod === 'midtrans' ? 'border-iosBlue bg-blue-50' : 'border-gray-300'">
+                            <div class="flex items-center gap-2">
                                 <input 
                                     type="radio" 
                                     x-model="form.paymentMethod" 
                                     value="midtrans"
-                                    class="w-5 h-5 text-iosBlue"
+                                    class="w-4 h-4 text-iosBlue"
                                 >
                                 <div>
-                                    <div class="font-semibold text-gray-900">Midtrans</div>
-                                    <div class="text-xs text-gray-500">Multi payment gateway</div>
+                                    <div class="font-medium text-gray-900 text-sm">Midtrans</div>
+                                    <div class="text-xs text-gray-500">Multi payment</div>
                                 </div>
                             </div>
                         </label>
  
                     @if($manualPaymentMethods->count() > 0)
-                        <div x-show="form.paymentMethod === 'manual'" x-transition class="space-y-3">
+                        <div x-show="form.paymentMethod === 'manual'" x-transition class="space-y-2 mb-5">
                             @foreach($manualPaymentMethods as $method)
-                                <label class="border-2 border-gray-300 hover:border-iosBlue rounded-lg p-4 cursor-pointer transition flex items-center justify-between">
-                                    <div class="flex items-center gap-3 flex-1">
+                                <label class="border-2 border-gray-300 hover:border-iosBlue rounded-lg p-3 cursor-pointer transition flex items-center justify-between">
+                                    <div class="flex items-center gap-2 flex-1">
                                         <input type="radio" x-model="form.bankCode" value="{{ $method->bank_code }}" class="w-4 h-4">
-                                        <div>
-                                            <span class="text-lg font-bold text-blue-600">{{ $method->name }}</span>
+                                        <div class="flex-1">
+                                            <span class="text-sm font-semibold text-blue-600">{{ $method->name }}</span>
                                             @if($method->account_number)
                                                 <div class="text-xs text-gray-500">{{ $method->account_number }}</div>
                                             @endif
@@ -212,40 +212,37 @@
                                             @endif
                                         </div>
                                     </div>
-                                    <i class="ri-radio-button-line text-gray-400 text-xl"></i>
                                 </label>
                             @endforeach
 
                             <!-- Instructions -->
-                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6 text-xs text-gray-700">
-                                <h5 class="font-bold text-gray-900 mb-2">Langkah-langkah:</h5>
-                                <ol class="list-decimal list-inside space-y-1">
-                                    <li>Transfer sesuai nominal yang tertera</li>
+                            <div class="bg-blue-50 border border-blue-200 rounded p-3 mt-4 text-xs text-gray-600">
+                                <h5 class="font-semibold text-gray-900 mb-1 text-sm">Langkah-langkah:</h5>
+                                <ol class="list-decimal list-inside space-y-0.5 text-xs">
+                                    <li>Transfer sesuai nominal</li>
                                     <li>Simpan bukti transfer</li>
-                                    <li>Kirim ke form upload bukti pembayaran</li>
-                                    <li>Akan dikonfirmasi admin paling lama 1x24 jam</li>
+                                    <li>Kirim bukti pembayaran</li>
+                                    <li>Konfirmasi admin 1x24 jam</li>
                                 </ol>
                             </div>
                         </div>
                     @else
-                        <div x-show="form.paymentMethod === 'manual'" x-transition class="space-y-3">
-                            <p class="text-gray-500 text-sm">Tidak ada metode transfer manual yang tersedia saat ini. Silahkan hubungi admin.</p>
+                        <div x-show="form.paymentMethod === 'manual'" x-transition class="mb-5">
+                            <p class="text-gray-500 text-xs">Tidak ada metode transfer manual yang tersedia. Hubungi admin.</p>
                         </div>
                     @endif
 
                     <!-- Submit Button -->
-                    <div class="mt-8 flex gap-4">
-                        <button 
-                            type="submit"
-                            :disabled="!form.agreeTerms || loading"
-                            class="flex-1 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition text-center text-sm"
-                        >
-                            <span x-show="!loading">Lanjutkan Pembayaran</span>
-                            <span x-show="loading">
-                                <i class="fa-solid fa-spinner animate-spin"></i> Memproses...
-                            </span>
-                        </button>
-                    </div>
+                    <button 
+                        type="submit"
+                        :disabled="!form.agreeTerms || loading"
+                        class="w-full bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition text-center text-sm mt-6"
+                    >
+                        <span x-show="!loading">Lanjutkan Pembayaran</span>
+                        <span x-show="loading">
+                            <i class="fa-solid fa-spinner animate-spin"></i> Memproses...
+                        </span>
+                    </button>
                 </div>
 
             </div>
