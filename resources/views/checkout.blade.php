@@ -63,7 +63,6 @@
                 </div>
 
                 <div class="p-6 space-y-6">
-                    <!-- Success Header -->
                     <div class="text-center py-4">
                         <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
                             <i class="ri-check-line text-3xl text-green-600"></i>
@@ -72,7 +71,6 @@
                         <p class="text-gray-600">Invoice: <span class="font-semibold text-gray-900" x-text="paymentData.invoice"></span></p>
                     </div>
 
-                    <!-- Order Details -->
                     <div class="bg-gray-50 rounded-lg p-4 space-y-3">
                         <h4 class="font-semibold text-gray-900 mb-3">Detail Pesanan</h4>
                         <div class="space-y-2 text-sm">
