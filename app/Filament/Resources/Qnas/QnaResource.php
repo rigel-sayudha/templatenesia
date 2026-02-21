@@ -18,7 +18,8 @@ class QnaResource extends Resource
 {
     protected static ?string $model = Qna::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    // Ikon QnA / FAQ
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedQuestionMarkCircle;
 
     public static function getNavigationGroup(): ?string
     {

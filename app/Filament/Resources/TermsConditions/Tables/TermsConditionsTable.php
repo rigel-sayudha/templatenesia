@@ -28,22 +28,6 @@ class TermsConditionsTable
             ->filters([
                 //
             ])
-            ->headerActions([
-                CreateAction::make()
-                    ->label('+ Tambah Syarat & Ketentuan')
-                    ->modalHeading('Tambah Syarat & Ketentuan Baru')
-                    ->modalSubmitActionLabel('Buat')
-                    ->modalCancelActionLabel('Batal')
-                    ->modalWidth('2xl')
-                    ->form([
-                        Textarea::make('content')
-                            ->label('Konten')
-                            ->required()
-                            ->rows(6),
-                        Toggle::make('is_active')
-                            ->label('Aktif'),
-                    ]),
-            ])
             ->recordActions([
                 EditAction::make()
                     ->label('Ubah')

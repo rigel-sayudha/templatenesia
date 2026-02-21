@@ -3,25 +3,12 @@
 @section('title', 'Detail Produk - Templatenesia Official')
 
 @section('head')
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-<link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script>
-    tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Plus Jakarta Sans', 'sans-serif'] }, colors: { iosBlue: '#007AFF', iosPurple: '#9333ea', iosDark: '#1D1D1F', iosBg: '#F5F5F7', }, boxShadow: { 'soft': '0 8px 30px rgba(0,0,0,0.04)', 'glow': '0 0 20px rgba(0, 122, 255, 0.3)', } } } }
-</script>
-<style>
-    .glass-header { background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,0,0,0.05); }
-</style>
+{{-- Page-specific styles only --}}
 @endsection
 
 @section('content')
 <header class="fixed top-0 w-full z-50 glass-header transition-all duration-300">
     <div class="max-w-screen-xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-center relative">
-        <!-- Logo di kiri -->
         <a href="/" class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition absolute left-4 sm:left-6">
             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjRzyTdfjkBugSP3Ew_vmkaeMQKl0XnZVR83kFV0LtKJXC4gVF_WTGPS57iCampIjdlGU09l_Ct0hw_2Tx51GiHj5uWr6fTYqzJirf8qpAKhwW0AsM-pYcam74_l25KpFvShEYQdkJ-UnuJQsuiP7qa7Ek85k0MWaF0X0pHGmJZ2imL8IQK9ip5M9s2sW0/s16000/Templatenesia%20Logo.jpg" 
                  class="w-10 h-10 rounded-lg object-cover shadow-sm" alt="Templatenesia Logo">
@@ -30,7 +17,6 @@
             </div>
         </a>
 
-        <!-- Navigation Menu di Tengah -->
         <nav class="hidden md:flex items-center gap-8">
             <a href="/" class="text-slate-900 hover:text-iosBlue font-semibold text-sm transition-colors">
                 <i class="ri-home-line mr-2"></i>Beranda
@@ -43,7 +29,6 @@
             </a>
         </nav>
 
-        <!-- Button di kanan -->
         <a href="https://wa.me/6287751299911" target="_blank" class="flex items-center gap-2 bg-slate-900 hover:bg-iosBlue text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95 absolute right-4 sm:right-6">
             <i class="ri-whatsapp-line text-lg"></i>
             <span class="hidden sm:inline">Hubungi Admin</span>
@@ -53,7 +38,7 @@
 
 <div class="min-h-screen bg-slate-50 pt-32 pb-16">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
-        <!-- Breadcrumb -->
+
         <div class="flex items-center gap-2 text-sm text-slate-500 mb-8">
             <a href="/" class="hover:text-iosBlue">Beranda</a>
             <i class="ri-arrow-right-s-line"></i>
@@ -62,9 +47,7 @@
             <span class="text-slate-900 font-semibold">{{ $product->title ?? 'Detail Produk' }}</span>
         </div>
 
-        <!-- Product Detail -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-            <!-- Product Image -->
             <div>
                 <div class="bg-gradient-to-br from-iosBlue/10 to-iosPurple/10 rounded-2xl overflow-hidden aspect-square flex items-center justify-center sticky top-32">
                     <img src="{{ $product->image ?? 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 500 500%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22500%22 height=%22500%22/%3E%3C/svg%3E' }}" 
@@ -73,9 +56,7 @@
                 </div>
             </div>
 
-            <!-- Product Info -->
             <div class="space-y-8">
-                <!-- Header -->
                 <div>
                     <div class="inline-flex items-center gap-2 bg-iosBlue/10 text-iosBlue px-3 py-1 rounded-full text-xs font-bold mb-4">
                         <i class="ri-tag-line"></i>
@@ -275,6 +256,7 @@
         </div>
     </div>
 </div>
+
 
 <!-- Footer -->
 @include('partials.footer')

@@ -352,5 +352,6 @@
     </script>
 </main>
 
+
 <!-- Footer -->
 @include('partials.footer')

@@ -54,7 +54,6 @@
             </div>
         </div>
 
-        <!-- Divider -->
         <div class="border-t border-white/10 pt-8">
             <div class="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-white/60">
                 <p>&copy; 2025 Templatenesia. Semua hak dilindungi</p>

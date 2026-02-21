@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Settings\Tables;
 
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
@@ -27,24 +26,6 @@ class SettingsTable
             ])
             ->filters([
                 //
-            ])
-            ->headerActions([
-                CreateAction::make()
-                    ->label('+ Tambah Pengaturan')
-                    ->modalHeading('Tambah Pengaturan Baru')
-                    ->modalSubmitActionLabel('Buat')
-                    ->modalCancelActionLabel('Batal')
-                    ->modalWidth('2xl')
-                    ->form([
-                        TextInput::make('key')
-                            ->label('Kunci Pengaturan')
-                            ->required()
-                            ->unique('settings', 'key')
-                            ->maxLength(255),
-                        Textarea::make('value')
-                            ->label('Nilai')
-                            ->rows(4),
-                    ]),
             ])
             ->recordActions([
                 EditAction::make()

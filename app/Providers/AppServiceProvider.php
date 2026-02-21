@@ -78,6 +78,32 @@ class AppServiceProvider extends ServiceProvider
                 Filament::registerRenderHook(\Filament\View\PanelsRenderHook::TOPBAR_END, function () {
                     return view('filament.components.theme-toggle');
                 });
+
+                // Custom Filament styles
+                Filament::registerRenderHook(\Filament\View\PanelsRenderHook::STYLES_AFTER, function () {
+                    return '<style>
+                        .fi-page-content {
+                            column-gap: 30px !important;
+                            grid-template-columns: repeat(3, 1fr) !important;
+                            grid-template-rows: repeat(4, 1fr) !important;
+                            background-color: rgba(255, 255, 255, 1) !important;
+                            border-color: rgba(0, 0, 0, 0) !important;
+                            border-image: none !important;
+                        }
+                        /* Hide empty table header actions container on settings list page */
+                        .fi-resource-settings .fi-ta-header.fi-ta-header-adaptive-actions-position {
+                            display: none !important;
+                        }
+                        /* Hide the "New setting" header action button on settings resource pages */
+                        .fi-resource-settings .fi-header-actions-ctn .fi-ac-btn-action {
+                            display: none !important;
+                        }
+                        /* Hide the "+ Tambah Pengaturan" table header action button on settings resource tables */
+                        .fi-resource-settings .fi-ta-header .fi-ta-actions .fi-ac-btn-action {
+                            display: none !important;
+                        }
+                    </style>';
+                });
             });
         }
 

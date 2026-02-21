@@ -36,30 +36,6 @@ class QnasTable
             ->filters([
                 //
             ])
-            ->headerActions([
-                CreateAction::make()
-                    ->label('+ Tambah Q&A')
-                    ->modalHeading('Tambah Q&A Baru')
-                    ->modalSubmitActionLabel('Buat')
-                    ->modalCancelActionLabel('Batal')
-                    ->modalWidth('2xl')
-                    ->form([
-                        TextInput::make('question')
-                            ->label('Pertanyaan')
-                            ->required()
-                            ->maxLength(255),
-                        Textarea::make('answer')
-                            ->label('Jawaban')
-                            ->required()
-                            ->rows(4),
-                        TextInput::make('sort_order')
-                            ->label('Urutan Tampil')
-                            ->numeric()
-                            ->default(0),
-                        Toggle::make('is_active')
-                            ->label('Aktif'),
-                    ]),
-            ])
             ->recordActions([
                 EditAction::make()
                     ->label('Ubah')

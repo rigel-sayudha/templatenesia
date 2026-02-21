@@ -19,7 +19,6 @@
 @endsection
 
 @section('content')
-<!-- Header Topbar -->
 <header class="fixed top-0 w-full z-50 glass-header transition-all duration-300">
     <div class="max-w-screen-xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-center relative">
         <a href="/" class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition absolute left-4 sm:left-6">
@@ -276,14 +275,10 @@
                     </div>
                 </div>
 
-
-                <!-- Payment Method -->
                 <div class="bg-white rounded-lg p-6">
                     <h3 class="text-lg font-bold mb-5 underline-accent">Metode Pembayaran</h3>
-                    
-                    <!-- 2 Fixed Payment Method Options -->
+
                     <div class="grid grid-cols-2 gap-3 mb-5">
-                        <!-- Transfer Manual Option -->
                         <label class="border-2 rounded-lg p-3 cursor-pointer transition" :class="form.paymentMethod === 'manual' ? 'border-iosBlue bg-blue-50' : 'border-gray-300'">
                             <div class="flex items-center gap-2">
                                 <input 
@@ -332,23 +327,23 @@
                                     </div>
                                 </label>
                             @endforeach
-
-                            <!-- Instructions -->
-                            <div class="bg-blue-50 border border-blue-200 rounded p-3 mt-4 text-xs text-gray-600">
-                                <h5 class="font-semibold text-gray-900 mb-1 text-sm">Langkah-langkah:</h5>
-                                <ol class="list-decimal list-inside space-y-0.5 text-xs">
-                                    <li>Transfer sesuai nominal</li>
-                                    <li>Simpan bukti transfer</li>
-                                    <li>Kirim bukti pembayaran</li>
-                                    <li>Konfirmasi admin 1x24 jam</li>
-                                </ol>
-                            </div>
                         </div>
                     @else
                         <div x-show="form.paymentMethod === 'manual'" x-transition class="mb-5">
                             <p class="text-gray-500 text-xs">Tidak ada metode transfer manual yang tersedia. Hubungi admin.</p>
                         </div>
                     @endif
+
+                    <!-- Transfer manual instructions, now placed near the submit button -->
+                    <div x-show="form.paymentMethod === 'manual'" x-transition class="bg-blue-50 border border-blue-200 rounded p-3 mt-4 text-xs text-gray-600">
+                        <h5 class="font-semibold text-gray-900 mb-1 text-sm">Langkah-langkah:</h5>
+                        <ol class="list-decimal list-inside space-y-0.5 text-xs">
+                            <li>Transfer sesuai nominal</li>
+                            <li>Simpan bukti transfer</li>
+                            <li>Kirim bukti pembayaran</li>
+                            <li>Konfirmasi admin 1x24 jam</li>
+                        </ol>
+                    </div>
 
                     <!-- Submit Button -->
                     <button 
