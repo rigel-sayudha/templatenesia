@@ -51,7 +51,6 @@
 <div class="min-h-screen bg-gray-50 py-8 pt-32">
     <div x-data="checkoutApp()" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <!-- Payment Success Modal/Section -->
         <div x-show="paymentSuccess" x-transition class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                 <div class="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
@@ -313,8 +312,15 @@
                         <div x-show="form.paymentMethod === 'manual'" x-transition class="space-y-2 mb-5">
                             @foreach($manualPaymentMethods as $method)
                                 <label class="border-2 border-gray-300 hover:border-iosBlue rounded-lg p-3 cursor-pointer transition flex items-center justify-between">
-                                    <div class="flex items-center gap-2 flex-1">
-                                        <input type="radio" x-model="form.bankCode" value="{{ $method->bank_code }}" class="w-4 h-4">
+                                    <div class="flex items-center gap-3 flex-1">
+                                        <input type="radio" x-model="form.bankCode" value="{{ $method->bank_code }}" class="w-4 h-4 text-iosBlue mt-0.5 self-start">
+                                        
+                                        @if($method->logo && Storage::disk('public')->exists($method->logo))
+                                            <div class="w-12 h-8 bg-white border border-gray-100 rounded flex items-center justify-center p-1 shrink-0">
+                                                <img src="{{ asset('storage/' . $method->logo) }}" alt="{{ $method->name }}" class="max-w-full max-h-full object-contain">
+                                            </div>
+                                        @endif
+
                                         <div class="flex-1">
                                             <span class="text-sm font-semibold text-blue-600">{{ $method->name }}</span>
                                             @if($method->account_number)

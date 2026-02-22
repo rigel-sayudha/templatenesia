@@ -3,7 +3,6 @@
 @section('title', 'Panduan - Templatenesia Official')
 
 @section('head')
-{{-- Page-specific styles only --}}
 @endsection
 
 @section('content')
@@ -67,22 +66,23 @@
         
         <div class="space-y-3">
             <template x-for="(faq, index) in filteredFaqs" :key="index">
-                <button 
-                    @click="toggleFaq(index)"
-                    class="w-full text-left bg-white hover:bg-slate-50 p-4 rounded-lg transition-all border border-slate-200 hover:border-iosBlue group"
-                >
-                    <div class="flex justify-between items-start gap-4">
-                        <span x-text="faq.question" class="font-semibold text-slate-900 group-hover:text-iosBlue transition-colors"></span>
-                        <i :class="openFaqIndex === index ? 'ri-subtract-line' : 'ri-add-line'" class="text-iosBlue flex-shrink-0 mt-1"></i>
+                <div class="faq-item mb-3">
+                    <button 
+                        @click="toggleFaq(index)"
+                        class="w-full text-left bg-white hover:bg-slate-50 p-4 rounded-lg transition-all border border-slate-200 hover:border-iosBlue group"
+                    >
+                        <div class="flex justify-between items-start gap-4">
+                            <span x-text="faq.question" class="font-semibold text-slate-900 group-hover:text-iosBlue transition-colors"></span>
+                            <i :class="openFaqIndex === index ? 'ri-subtract-line' : 'ri-add-line'" class="text-iosBlue flex-shrink-0 mt-1"></i>
+                        </div>
+                    </button>
+                    <div x-show="openFaqIndex === index" x-transition class="bg-blue-50 border border-blue-100 p-4 rounded-lg mt-2 text-slate-600 text-sm leading-relaxed">
+                        <p x-text="faq.answer"></p>
                     </div>
-                </button>
-                <div x-show="openFaqIndex === index" x-transition class="bg-blue-50 border border-blue-100 p-4 rounded-lg text-slate-600 text-sm leading-relaxed">
-                    <p x-text="faq.answer"></p>
                 </div>
             </template>
         </div>
 
-        <!-- No Results -->
         <div x-show="filteredFaqs.length === 0" class="text-center py-12">
             <i class="ri-search-eye-line text-4xl text-slate-300 mb-4"></i>
             <p class="text-slate-500">Tidak ada pertanyaan yang cocok dengan pencarian Anda</p>
@@ -117,60 +117,7 @@
         return {
             searchQuery: '',
             openFaqIndex: null,
-            allFaqs: [
-                {
-                    question: 'Bagaimana cara melakukan pembelian produk digital?',
-                    answer: 'Langkah pertama adalah memilih produk yang ingin dibeli di halaman produk. Klik tombol "Beli" atau "Lihat Detail", kemudian ikuti proses checkout. Isi data diri Anda, pilih metode pembayaran, dan konfirmasi pembayaran. Setelah pembayaran berhasil, link download akan dikirim ke email dan WhatsApp Anda.'
-                },
-                {
-                    question: 'Metode pembayaran apa saja yang tersedia?',
-                    answer: 'Kami menyediakan dua metode pembayaran utama: (1) Transfer Manual ke rekening bank kami (BRI, BCA, BNI), dan (2) Midtrans yang mendukung kartu kredit, e-wallet (GoPay, OVO, DANA), bank transfer, dan virtual account. Pilih metode yang paling sesuai dengan kebutuhan Anda.'
-                },
-                {
-                    question: 'Berapa lama proses konfirmasi pembayaran?',
-                    answer: 'Untuk pembayaran transfer manual, proses konfirmasi biasanya membutuhkan waktu 1-2 jam kerja setelah transfer berhasil. Untuk pembayaran Midtrans, proses akan instan dan link download langsung dapat diakses. Jika terlambat, hubungi admin kami melalui WhatsApp.'
-                },
-                {
-                    question: 'Bagaimana cara download produk setelah pembayaran?',
-                    answer: 'Setelah pembayaran dikonfirmasi, link download akan otomatis dikirim ke email dan WhatsApp Anda. Klik link tersebut untuk mulai mendownload. File akan berupa ZIP yang berisi semua dokumen yang sudah dibeli. Anda dapat mendownload berkali-kali tanpa batasan.'
-                },
-                {
-                    question: 'Apakah ada batasan waktu untuk download produk?',
-                    answer: 'Tidak ada batasan waktu. Anda dapat mendownload produk kapan saja selamanya. Link download akan tetap aktif dan dapat diakses setiap saat. Simpan link tersebut di tempat yang aman atau download sekarang juga.'
-                },
-                {
-                    question: 'Bagaimana cara download produk?' ,
-                    answer: 'File akan disimpan di cloud Anda selamanya. Link download akan dikirim ke email dan WhatsApp. Anda bisa mendownload berkali-kali kapan saja tanpa batasan waktu. File tersedia dalam format ZIP yang mudah di-extract.'
-                },
-                {
-                    question: 'Apakah ada biaya tambahan untuk update produk?',
-                    answer: 'Tidak ada biaya tambahan. Jika ada update atau versi terbaru dari template yang Anda beli, Anda dapat mendownload versi terbaru tanpa biaya ekstra. Kami berkomitmen memberikan update gratis kepada semua pelanggan.'
-                },
-                {
-                    question: 'Apakah produk yang dibeli bisa di-refund?',
-                    answer: 'Karena sifat produk digital yang dapat langsung diakses setelah pembelian, kebijakan refund kami tidak berlaku. Namun, jika produk tidak sesuai dengan deskripsi atau ada kesalahan, silakan hubungi admin kami untuk solusi terbaik.'
-                },
-                {
-                    question: 'Apakah produk dilengkapi dengan dokumentasi?',
-                    answer: 'Ya, semua produk kami dilengkapi dengan dokumentasi lengkap dan panduan penggunaan. Dokumentasi berupa file PDF atau Word yang menjelaskan cara menggunakan template dengan detail. Anda juga dapat menghubungi kami jika ada pertanyaan.'
-                },
-                {
-                    question: 'Bagaimana cara mendapatkan support teknis?',
-                    answer: 'Tim customer service kami siap membantu Anda melalui WhatsApp, Email, atau Chat. Hubungi admin kami di tombol "Hubungi Admin" yang tersedia di setiap halaman. Kami biasanya merespon dalam waktu kurang dari 2 jam.'
-                },
-                {
-                    question: 'Apakah ada diskon untuk pembelian dalam jumlah banyak?',
-                    answer: 'Kami sering menawarkan promosi khusus dan diskon bundle untuk pembelian produk multiple. Pantau halaman kami atau hubungi admin untuk mendapatkan penawaran khusus dan harga grosir untuk pembelian dalam jumlah besar.'
-                },
-                {
-                    question: 'Bagaimana cara menggunakan voucher diskon?',
-                    answer: 'Jika Anda memiliki voucher diskon, masukkan kode voucher di halaman checkout sebelum melakukan pembayaran. Sistem akan otomatis menghitung diskon dan mengurangi total harga. Pastikan voucher masih berlaku dan sesuai dengan syarat & ketentuan yang berlaku.'
-                },
-                {
-                    question: 'Apakah produk dapat digunakan untuk keperluan komersial?',
-                    answer: 'Iya, semua produk kami dapat digunakan untuk keperluan komersial maupun personal. Anda dapat menggunakan, mengedit, dan mendistribusikan ulang dengan lisensi yang sesuai. Baca lisensi produk untuk detail lebih lanjut atau hubungi tim kami.'
-                }
-            ],
+            allFaqs: {!! json_encode($qnas_js) !!},
             filteredFaqs: [],
 
             init() {

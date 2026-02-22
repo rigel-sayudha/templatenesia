@@ -2,7 +2,7 @@
 <footer class="bg-slate-900 text-white px-4 py-12">
     <div class="max-w-6xl mx-auto">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-            <!-- Brand -->
+            
             <div>
                 <div class="flex items-center gap-2 mb-4">
                     <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjRzyTdfjkBugSP3Ew_vmkaeMQKl0XnZVR83kFV0LtKJXC4gVF_WTGPS57iCampIjdlGU09l_Ct0hw_2Tx51GiHj5uWr6fTYqzJirf8qpAKhwW0AsM-pYcam74_l25KpFvShEYQdkJ-UnuJQsuiP7qa7Ek85k0MWaF0X0pHGmJZ2imL8IQK9ip5M9s2sW0/s16000/Templatenesia%20Logo.jpg" 
@@ -12,7 +12,6 @@
                 <p class="text-white/60 text-sm leading-relaxed">Platform terpercaya untuk membeli produk digital berkualitas tinggi. Semua template kami dibuat dengan standar profesional</p>
             </div>
 
-            <!-- Kategori Produk -->
             <div>
                 <h3 class="font-bold mb-4">Kategori Produk</h3>
                 <ul class="space-y-2 text-sm text-white/60">
@@ -23,7 +22,6 @@
                 </ul>
             </div>
 
-            <!-- Dukungan -->
             <div>
                 <h3 class="font-bold mb-4">Dukungan</h3>
                 <ul class="space-y-2 text-sm text-white/60">
@@ -34,7 +32,6 @@
                 </ul>
             </div>
 
-            <!-- Sosial Media -->
             <div>
                 <h3 class="font-bold mb-4">Ikuti Kami</h3>
                 <div class="flex gap-4">

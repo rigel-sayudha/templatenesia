@@ -11,7 +11,6 @@
     <div class="glass-bottom-nav">
         <div class="bottom-nav-inner">
 
-            {{-- Beranda --}}
             <a href="/" class="bottom-nav-item {{ request()->is('/') || request()->routeIs('home') ? 'active' : '' }}"
                aria-label="Beranda">
                 <div class="bottom-nav-icon-wrap">
@@ -20,7 +19,6 @@
                 <span class="bottom-nav-label">Beranda</span>
             </a>
 
-            {{-- Produk --}}
             <a href="/products" class="bottom-nav-item {{ request()->is('products*') ? 'active' : '' }}"
                aria-label="Produk">
                 <div class="bottom-nav-icon-wrap">
@@ -29,7 +27,6 @@
                 <span class="bottom-nav-label">Produk</span>
             </a>
 
-            {{-- Hubungi Admin — Center CTA (mirrors desktop WhatsApp button) --}}
             <a href="https://wa.me/6287751299911" target="_blank"
                class="bottom-nav-cta"
                aria-label="Hubungi Admin via WhatsApp">
@@ -39,7 +36,6 @@
                 <span class="bottom-nav-label" style="color:#1D1D1F;">Admin</span>
             </a>
 
-            {{-- Panduan --}}
             <a href="/guide" class="bottom-nav-item {{ request()->is('guide*') ? 'active' : '' }}"
                aria-label="Panduan">
                 <div class="bottom-nav-icon-wrap">
@@ -48,7 +44,6 @@
                 <span class="bottom-nav-label">Panduan</span>
             </a>
 
-            {{-- Pesanan --}}
             <a href="/orders" class="bottom-nav-item {{ request()->is('orders*') ? 'active' : '' }}"
                aria-label="Pesanan Saya">
                 <div class="bottom-nav-icon-wrap">
@@ -62,12 +57,9 @@
 </nav>
 
 <style>
-    /* Safe area support (iPhone notch/home bar) */
     #mobile-bottom-nav {
         padding-bottom: env(safe-area-inset-bottom, 0px);
     }
-
-    /* Glass morphism background — match glass-header from desktop */
     .glass-bottom-nav {
         background: rgba(255, 255, 255, 0.92);
         backdrop-filter: blur(16px);
@@ -76,7 +68,6 @@
         box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.06);
     }
 
-    /* Inner flex row */
     .bottom-nav-inner {
         display: flex;
         align-items: flex-end;
@@ -86,7 +77,6 @@
         margin: 0 auto;
     }
 
-    /* Regular nav item */
     .bottom-nav-item {
         display: flex;
         flex-direction: column;
@@ -101,7 +91,6 @@
     }
     .bottom-nav-item:active { opacity: 0.7; }
 
-    /* Icon wrap — pill indicator on active */
     .bottom-nav-icon-wrap {
         display: flex;
         align-items: center;
@@ -116,7 +105,6 @@
         transform: scale(0.88);
     }
 
-    /* Active state */
     .bottom-nav-item.active {
         color: #007AFF;
     }
@@ -124,7 +112,6 @@
         background: rgba(0, 122, 255, 0.1);
     }
 
-    /* Label */
     .bottom-nav-label {
         font-size: 0.6rem;
         font-weight: 600;
@@ -133,7 +120,6 @@
         white-space: nowrap;
     }
 
-    /* Center CTA button (WhatsApp — mirrors desktop button style) */
     .bottom-nav-cta {
         display: flex;
         flex-direction: column;
@@ -158,7 +144,7 @@
         font-size: 1.4rem;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
-        margin-top: -0.75rem; /* Slight pop-up effect */
+        margin-top: -0.75rem; 
     }
     .bottom-nav-cta:active .bottom-nav-cta-btn {
         background: #007AFF;
@@ -168,9 +154,6 @@
     .bottom-nav-cta .bottom-nav-label {
         margin-top: 0.1rem;
     }
-
-    /* Ensure page content doesn't hide behind bottom nav */
-    /* Add padding to body on mobile when this nav is visible */
     @media (max-width: 767px) {
         body {
             padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));

@@ -86,7 +86,15 @@ class PageController extends Controller
 
     public function guide()
     {
-        return view('guide');
+        $qnas = \App\Models\Qna::where('is_active', 1)->orderBy('sort_order')->get();
+        $qnas_js = $qnas->map(function ($q) {
+            return [
+                'question' => $q->question,
+                'answer' => $q->answer,
+            ];
+        })->toArray();
+
+        return view('guide', compact('qnas_js'));
     }
 
     public function product()

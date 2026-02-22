@@ -14,19 +14,15 @@
 <body class="bg-gray-900">
     <div class="min-h-screen flex items-center justify-center px-4 py-12">
         <div class="w-full max-w-md">
-            <!-- Card -->
             <div class="bg-gray-800 rounded-lg p-8 shadow-2xl border border-gray-700">
-                <!-- Header -->
                 <div class="text-center mb-8">
                     <h1 class="text-2xl font-bold text-white mb-2">Laravel</h1>
                     <h2 class="text-xl font-semibold text-gray-300">Masuk ke akun Anda</h2>
                 </div>
 
-                <!-- Form -->
                 <form method="POST" action="{{ route('login') }}" class="space-y-6">
                     @csrf
 
-                    <!-- Email Field -->
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-200 mb-2">
                             Alamat email <span class="text-red-500">*</span>
@@ -46,7 +42,6 @@
                         @enderror
                     </div>
 
-                    <!-- Password Field -->
                     <div>
                         <label for="password" class="block text-sm font-medium text-gray-200 mb-2">
                             Kata sandi <span class="text-red-500">*</span>
@@ -76,7 +71,6 @@
                         @enderror
                     </div>
 
-                    <!-- Remember Me -->
                     <div class="flex items-center">
                         <input
                             type="checkbox"
@@ -89,7 +83,6 @@
                         </label>
                     </div>
 
-                    <!-- Login Button -->
                     <button
                         type="submit"
                         class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 transform hover:scale-105 active:scale-95"
@@ -98,7 +91,6 @@
                     </button>
                 </form>
 
-                <!-- Footer -->
                 <div class="mt-6 pt-6 border-t border-gray-700 text-center">
                     <p class="text-sm text-gray-400">
                         © 2026 Templatenesia. All rights reserved.
@@ -106,7 +98,6 @@
                 </div>
             </div>
 
-            <!-- Info Box -->
             <div class="mt-6 bg-blue-900 bg-opacity-50 border border-blue-700 rounded-lg p-4 text-center">
                 <p class="text-sm text-blue-200">
                     Demo credentials:<br>

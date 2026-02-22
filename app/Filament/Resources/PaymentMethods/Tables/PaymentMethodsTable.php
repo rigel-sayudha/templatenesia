@@ -10,8 +10,10 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BooleanColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Table;
 use App\Models\PaymentMethod;
 
@@ -24,6 +26,9 @@ class PaymentMethodsTable
             ->heading(null)
             ->headerActions([])
             ->columns([
+                ImageColumn::make('logo')
+                    ->label('Logo')
+                    ->disk('public'),
                 TextColumn::make('name')
                     ->label('Nama Metode Pembayaran')
                     ->searchable()
@@ -53,6 +58,12 @@ class PaymentMethodsTable
                             ->label('Nama Metode Pembayaran')
                             ->required()
                             ->maxLength(255),
+                        FileUpload::make('logo')
+                            ->label('Logo Bank/Metode')
+                            ->image()
+                            ->disk('public')
+                            ->directory('payment-method-logos')
+                            ->maxSize(2048),
                         Textarea::make('description')
                             ->label('Deskripsi')
                             ->rows(3),

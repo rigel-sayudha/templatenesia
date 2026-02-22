@@ -8,6 +8,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\FileUpload;
 use Filament\Resources\Pages\ListRecords;
 
 class ListPaymentMethods extends ListRecords
@@ -28,6 +29,12 @@ class ListPaymentMethods extends ListRecords
                         ->label('Nama Metode Pembayaran')
                         ->required()
                         ->maxLength(255),
+                    FileUpload::make('logo')
+                        ->label('Logo Bank/Metode')
+                        ->image()
+                        ->disk('public')
+                        ->directory('payment-method-logos')
+                        ->maxSize(2048),
                     Textarea::make('description')
                         ->label('Deskripsi')
                         ->rows(3),

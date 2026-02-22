@@ -72,7 +72,6 @@
                     </p>
                 </div>
 
-                <!-- Rating & Reviews -->
                 <div class="flex items-center gap-4 pb-8 border-b border-slate-200">
                     <div class="flex items-center gap-1">
                         <i class="fa-solid fa-star text-yellow-400"></i>
@@ -81,7 +80,6 @@
                     </div>
                 </div>
 
-                <!-- Pricing -->
                 <div class="space-y-4">
                     <div class="flex items-baseline gap-4">
                         @if($product->discount_price && $product->discount_price < $product->price)
@@ -107,7 +105,6 @@
                     </p>
                 </div>
 
-                <!-- Action Buttons -->
                 <div class="space-y-3 pt-8">
                     <a href="{{ route('checkout', ['product_id' => $product->id ?? 1]) }}" class="w-full bg-gradient-to-r from-iosBlue to-iosPurple hover:shadow-xl text-white font-bold px-6 py-4 rounded-xl transition-all shadow-lg hover:-translate-y-1 inline-flex items-center justify-center">
                         <i class="ri-shopping-cart-line mr-2"></i>
@@ -119,7 +116,6 @@
                     </button>
                 </div>
 
-                <!-- Features -->
                 <div class="bg-slate-100 rounded-xl p-6 space-y-3">
                     <h3 class="font-bold text-slate-900">Apa yang Anda dapatkan:</h3>
                     <ul class="space-y-2 text-sm text-slate-600">
@@ -144,9 +140,7 @@
             </div>
         </div>
 
-        <!-- Product Tabs -->
         <div x-data="{ tab: 'deskripsi' }" class="bg-white rounded-2xl p-8 border border-slate-200 mb-16">
-            <!-- Tabs Navigation -->
             <div class="flex gap-8 border-b border-slate-200 mb-8 -mx-8 px-8">
                 <button @click="tab = 'deskripsi'" 
                         :class="tab === 'deskripsi' ? 'border-b-2 border-iosBlue text-iosBlue' : 'text-slate-600 hover:text-slate-900'"
@@ -165,7 +159,6 @@
                 </button>
             </div>
 
-            <!-- Tab Content -->
             <div x-show="tab === 'deskripsi'" x-transition class="prose max-w-none text-slate-600 leading-relaxed">
                 <p>{{ $product->description ?? 'Deskripsi produk tidak tersedia' }}</p>
                 <p>Produk ini telah dipilih oleh ribuan pengguna dan terbukti meningkatkan efisiensi kerja hingga 40%.</p>

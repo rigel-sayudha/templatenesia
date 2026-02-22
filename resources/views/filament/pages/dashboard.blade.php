@@ -1,7 +1,7 @@
 <x-filament-panels::page>
 
 <style>
-    /* Minimal stats grid — match Filament's whitespace-heavy style */
+ 
     .fi-dash-stats {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -12,7 +12,6 @@
         .fi-dash-stats { grid-template-columns: repeat(4, 1fr); }
     }
 
-    /* Stat card: plain white card like Filament widgets */
     .fi-stat-card {
         background: #fff;
         border: 1px solid #e5e7eb;
@@ -42,7 +41,6 @@
         font-weight: 700;
     }
 
-    /* Main layout */
     .fi-dash-main {
         display: grid;
         grid-template-columns: 1fr;
@@ -52,7 +50,6 @@
         .fi-dash-main { grid-template-columns: 1fr 288px; }
     }
 
-    /* Table card — same appearance as Filament table widgets */
     .fi-table-wrap {
         background: #fff;
         border: 1px solid #e5e7eb;
@@ -72,7 +69,6 @@
     .fi-tbl-sub { font-size: 0.75rem; color: #6b7280; margin-top: 1px; }
     .dark .fi-tbl-sub { color: #9ca3af; }
 
-    /* Table itself — mimic Filament's own table component */
     .fi-table { width: 100%; border-collapse: collapse; }
 
     .fi-table thead tr {
@@ -107,13 +103,11 @@
     }
     .dark .fi-table td { color: #d1d5db; }
 
-    /* Customer column */
     .fi-cust-name { font-size: 0.875rem; font-weight: 500; color: #111827; }
     .dark .fi-cust-name { color: #f3f4f6; }
     .fi-cust-email { font-size: 0.75rem; color: #6b7280; }
     .dark .fi-cust-email { color: #9ca3af; }
 
-    /* Invoice — monospace, subtle */
     .fi-invoice {
         font-family: ui-monospace, 'SF Mono', monospace;
         font-size: 0.8rem;
@@ -121,11 +115,9 @@
     }
     .dark .fi-invoice { color: #d1d5db; }
 
-    /* Amount */
     .fi-amount { font-size: 0.875rem; font-weight: 500; color: #111827; }
     .dark .fi-amount { color: #f3f4f6; }
 
-    /* Badge — match Filament's own badge style (amber for pending, green for paid) */
     .fi-badge {
         display: inline-flex;
         align-items: center;
@@ -155,7 +147,6 @@
     }
     .dark .fi-badge-other { background: rgba(127,29,29,0.3); color: #fca5a5; border-color: rgba(127,29,29,0.5); }
 
-    /* Table footer */
     .fi-tbl-foot {
         padding: 0.75rem 1rem;
         border-top: 1px solid #f3f4f6;
@@ -176,7 +167,6 @@
     }
     .dark .fi-tbl-foot select { background: #374151; border-color: #4b5563; color: #d1d5db; }
 
-    /* Right sidebar */
     .fi-sidebar-card {
         background: #fff;
         border: 1px solid #e5e7eb;
@@ -191,7 +181,6 @@
     .fi-sidebar-sub { font-size: 0.75rem; color: #6b7280; margin-bottom: 1rem; }
     .dark .fi-sidebar-sub { color: #9ca3af; }
 
-    /* Summary rows */
     .fi-row {
         display: flex;
         justify-content: space-between;
@@ -209,7 +198,6 @@
     .fi-row-val.green { color: #16a34a; }
     .dark .fi-row-val.green { color: #4ade80; }
 
-    /* Progress */
     .fi-prog-row { margin-bottom: 0.75rem; }
     .fi-prog-label { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 0.25rem; }
     .fi-prog-label span:first-child { color: #6b7280; }
@@ -220,14 +208,12 @@
     .dark .fi-prog-track { background: #374151; }
     .fi-prog-fill { height: 100%; border-radius: 9999px; }
 
-    /* Empty state */
     .fi-empty { display: flex; flex-direction: column; align-items: center; padding: 3rem 1rem; text-align: center; }
     .fi-empty svg { color: #d1d5db; margin-bottom: 0.75rem; }
     .dark .fi-empty svg { color: #4b5563; }
     .fi-empty p { font-size: 0.875rem; color: #6b7280; }
     .dark .fi-empty p { color: #9ca3af; }
 
-    /* Filter select */
     .fi-range-select {
         border: 1px solid #d1d5db;
         border-radius: 0.5rem;
@@ -240,7 +226,6 @@
     .dark .fi-range-select { background: #374151; border-color: #4b5563; color: #d1d5db; }
 </style>
 
-    {{-- Filter Row --}}
     <div style="display:flex; justify-content:flex-end; margin-bottom:0.25rem;">
         <select wire:model.live="timeRange" class="fi-range-select">
             <option value="today">Hari Ini</option>
