@@ -32,6 +32,13 @@
             <a href="/guide" class="text-slate-900 hover:text-iosBlue font-semibold text-sm transition-colors">
                 <i class="ri-book-line mr-2"></i>Panduan
             </a>
+            <a href="/orders" class="text-slate-900 hover:text-iosBlue font-semibold text-sm transition-colors">
+                <i class="ri-file-list-line mr-2"></i>Pesanan
+            </a>
+            <a href="/wishlist" class="text-slate-900 hover:text-iosBlue font-semibold text-sm transition-colors relative" x-data>
+                <i class="fa-regular fa-heart mr-2"></i>Wishlist
+                <span x-cloak x-show="$store.wishlist.count > 0" x-text="$store.wishlist.count" class="absolute -top-1 -right-4 bg-red-500 text-white min-w-[16px] h-4 rounded-full flex items-center justify-center text-[10px] font-bold px-1"></span>
+            </a>
         </nav>
 
         <!-- Button di kanan -->
@@ -184,6 +191,13 @@
                                 <div x-show="product.is_popular" class="absolute bottom-3 left-3 bg-white/90 backdrop-blur-md text-iosBlue text-xs font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-md">
                                     <i class="fa-solid fa-star text-yellow-400 text-xs"></i> Popular
                                 </div>
+
+                                <!-- Wishlist Button -->
+                                <button @click.prevent="$store.wishlist.toggle(product)" 
+                                    :class="$store.wishlist.has(product.id) ? 'bg-white text-red-500' : 'bg-iosBlue text-white group-hover:bg-iosPurple'"
+                                    class="absolute bottom-3 right-3 w-8 h-8 rounded-full flex items-center justify-center shadow-md transition-all z-20">
+                                    <i class="fa-solid fa-heart text-sm" :class="$store.wishlist.has(product.id) ? 'text-red-500' : 'text-white'"></i>
+                                </button>
                             </div>
                             
                             <!-- Content -->

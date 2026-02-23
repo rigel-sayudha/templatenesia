@@ -33,7 +33,12 @@ Route::get('/checkout', [PageController::class, 'checkout'])->name('checkout');
 
 
 Route::post('/checkout', [\App\Http\Controllers\CheckoutController::class, 'checkout'])->name('checkout');
+Route::post('/checkout/process', [\App\Http\Controllers\CheckoutController::class, 'checkout'])->name('checkout.process');
 Route::post('/webhook/payment', [\App\Http\Controllers\CheckoutController::class, 'webhook'])->name('webhook.payment');
+
+Route::get('/wishlist', function () {
+    return view('wishlist');
+})->name('wishlist');
 
 Route::get('/orders', function () {
 	$invoice = session('invoice_id');
@@ -59,7 +64,25 @@ Route::get('/dev/create-order/{id}', function ($id) {
 	if (! $p) return response('product not found', 404);
 	$invoice = 'INV' . time();
 	$order = \App\Models\Order::create([ 'invoice_id' => $invoice, 'product_id' => $p->id, 'quantity' => 1, 'total' => $p->price, 'status' => 'pending' ]);
+	session(['invoice_id' => $invoice]);
 	return response()->json(['ok' => true, 'invoice' => $invoice]);
+});
+
+Route::get('/debug-checkout', function() {
+    $request = \Illuminate\Http\Request::create('/checkout', 'POST', [
+        'product_id' => 1,
+        'quantity' => 1,
+        'name' => 'Test',
+        'email' => 'test@example.com',
+        'phone' => '123456',
+        'paymentMethod' => 'manual',
+        'bankCode' => \App\Models\PaymentMethod::where('type', 'manual')->first()->bank_code ?? 'bca'
+    ]);
+    
+    $controller = app(\App\Http\Controllers\CheckoutController::class);
+    $wa = app(\App\Services\WhatsAppService::class);
+    $midtrans = app(\App\Services\MidtransService::class);
+    return $controller->checkout($request, $midtrans, $wa);
 });
 
 Route::post('/dev/send-wa/{phone}', [NotificationController::class, 'sendTestWhatsApp'])->name('dev.send-wa');

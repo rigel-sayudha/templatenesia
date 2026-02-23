@@ -19,13 +19,12 @@ class PageController extends Controller
         $faqs = FAQ::where('is_active', 1)->latest()->take(6)->get();
 
         $products_js = $products->map(function ($p) {
-            // Determine current price and old price
             $hasDiscount = $p->discount_price && $p->discount_price > 0 && $p->discount_price < $p->price;
             $currentPrice = $hasDiscount ? $p->discount_price : $p->price;
             $oldPrice = $hasDiscount ? $p->price : null;
             
             return [
-                'name' => $p->title,
+                'name' => $p->name,
                 'description' => $p->description ?? '',
                 'category' => $p->category?->name ?? 'Produk',
                 'price' => $currentPrice,
@@ -63,14 +62,13 @@ class PageController extends Controller
         $products = Product::where('is_active', 1)->with('category')->latest()->get();
         
         $products_array = $products->map(function ($p) {
-            // Determine current price and old price
             $hasDiscount = $p->discount_price && $p->discount_price > 0 && $p->discount_price < $p->price;
             $currentPrice = $hasDiscount ? $p->discount_price : $p->price;
             $oldPrice = $hasDiscount ? $p->price : null;
             
             return [
                 'id' => $p->id,
-                'title' => $p->title,
+                'title' => $p->name,
                 'description' => $p->description ?? '',
                 'category' => $p->category?->name ?? 'Produk',
                 'price' => $currentPrice,
@@ -117,29 +115,26 @@ class PageController extends Controller
             ->take(4)
             ->get()
             ->map(function ($p) {
-                // Determine current price and old price
                 $hasDiscount = $p->discount_price && $p->discount_price > 0 && $p->discount_price < $p->price;
                 $currentPrice = $hasDiscount ? $p->discount_price : $p->price;
                 $oldPrice = $hasDiscount ? $p->price : null;
                 
                 return [
                     'id' => $p->id,
-                    'name' => $p->title,
+                    'name' => $p->name,
                     'price' => $currentPrice,
                     'oldPrice' => $oldPrice,
                     'image' => $p->image ?? 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 300 300%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22300%22 height=%22300%22/%3E%3C/svg%3E',
                 ];
             })
             ->toArray();
-
-        // Determine current price and old price for main product
         $hasDiscount = $product && $product->discount_price && $product->discount_price > 0 && $product->discount_price < $product->price;
         $currentPrice = $hasDiscount ? $product->discount_price : ($product?->price ?? 0);
         $oldPrice = $hasDiscount ? $product->price : null;
 
         $productData = $product ? [
             'id' => $product->id,
-            'title' => $product->title,
+            'title' => $product->name,
             'price' => $currentPrice,
             'oldPrice' => $oldPrice,
             'description' => $product->description,
@@ -156,14 +151,14 @@ class PageController extends Controller
         $product = Product::find(request()->query('id', request()->query('product_id', 1)));
         if (!$product) $product = Product::first();
 
-        // Determine current price and old price (use original price before modification)
         $originalPrice = $product->getRawOriginal('price');
         $hasDiscount = $product->discount_price && $product->discount_price > 0 && $product->discount_price < $originalPrice;
         $product->price = $hasDiscount ? $product->discount_price : $originalPrice;
         $product->old_price = $hasDiscount ? $originalPrice : null;
 
         $manualPaymentMethods = PaymentMethod::where('type', 'manual')->where('is_active', 1)->orderBy('sort_order')->get();
+        $termsAndConditions = \App\Models\TermsCondition::where('is_active', 1)->first();
         
-        return view('checkout', compact('product', 'manualPaymentMethods'));
+        return view('checkout', compact('product', 'manualPaymentMethods', 'termsAndConditions'));
     }
 }

@@ -27,6 +27,13 @@
             <a href="/guide" class="text-iosBlue font-semibold text-sm border-b-2 border-iosBlue pb-1">
                 <i class="ri-book-line mr-2"></i>Panduan
             </a>
+            <a href="/orders" class="text-slate-900 hover:text-iosBlue font-semibold text-sm transition-colors">
+                <i class="ri-file-list-line mr-2"></i>Pesanan
+            </a>
+            <a href="/wishlist" class="text-slate-900 hover:text-iosBlue font-semibold text-sm transition-colors relative" x-data>
+                <i class="fa-regular fa-heart mr-2"></i>Wishlist
+                <span x-cloak x-show="$store.wishlist.count > 0" x-text="$store.wishlist.count" class="absolute -top-1 -right-4 bg-red-500 text-white min-w-[16px] h-4 rounded-full flex items-center justify-center text-[10px] font-bold px-1"></span>
+            </a>
         </nav>
 
         <a href="https://wa.me/6287751299911" target="_blank" class="flex items-center gap-2 bg-slate-900 hover:bg-iosBlue text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95 absolute right-4 sm:right-6">

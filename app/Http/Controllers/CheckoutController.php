@@ -92,6 +92,7 @@ class CheckoutController extends Controller
                 'total' => $total,
                 'message' => 'Silakan transfer ke rekening di atas',
             ]);
+
         } else if ($paymentMethod === 'midtrans') {
             try {
                 $tx = $midtrans->createTransaction($order);

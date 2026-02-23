@@ -27,6 +27,13 @@
             <a href="/guide" class="text-slate-900 hover:text-iosBlue font-semibold text-sm transition-colors">
                 <i class="ri-book-line mr-2"></i>Panduan
             </a>
+            <a href="/orders" class="text-slate-900 hover:text-iosBlue font-semibold text-sm transition-colors">
+                <i class="ri-file-list-line mr-2"></i>Pesanan
+            </a>
+            <a href="/wishlist" class="text-slate-900 hover:text-iosBlue font-semibold text-sm transition-colors relative" x-data>
+                <i class="fa-regular fa-heart mr-2"></i>Wishlist
+                <span x-cloak x-show="$store.wishlist.count > 0" x-text="$store.wishlist.count" class="absolute -top-1 -right-4 bg-red-500 text-white min-w-[16px] h-4 rounded-full flex items-center justify-center text-[10px] font-bold px-1"></span>
+            </a>
         </nav>
 
         <a href="https://wa.me/6287751299911" target="_blank" class="flex items-center gap-2 bg-slate-900 hover:bg-iosBlue text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95 absolute right-4 sm:right-6">
@@ -110,9 +117,17 @@
                         <i class="ri-shopping-cart-line mr-2"></i>
                         Beli Sekarang
                     </a>
-                    <button class="w-full bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold px-6 py-4 rounded-xl transition-all">
-                        <i class="ri-heart-line mr-2"></i>
-                        Tambah ke Wishlist
+                    <button x-data @click.prevent="$store.wishlist.toggle({
+                            id: {{ $product->id ?? 1 }},
+                            name: '{{ addslashes($product->name ?? 'Produk Digital Templatenesia') }}',
+                            price: {{ $product->price ?? 0 }},
+                            oldPrice: {{ $product->oldPrice ?? 'null' }},
+                            image: '{{ $product->image ?? '' }}'
+                        })"
+                        :class="$store.wishlist.has({{ $product->id ?? 1 }}) ? 'bg-red-50 text-red-500 hover:bg-red-100 border border-red-200' : 'bg-slate-100 hover:bg-slate-200 text-slate-900 border border-transparent'"
+                        class="w-full font-bold px-6 py-4 rounded-xl transition-all flex items-center justify-center">
+                        <i class="mr-2" :class="$store.wishlist.has({{ $product->id ?? 1 }}) ? 'fa-solid fa-heart' : 'ri-heart-line'"></i>
+                        <span x-text="$store.wishlist.has({{ $product->id ?? 1 }}) ? 'Hapus dari Wishlist' : 'Tambah ke Wishlist'"></span>
                     </button>
                 </div>
 

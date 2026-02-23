@@ -52,6 +52,15 @@
                 <span class="bottom-nav-label">Pesanan</span>
             </a>
 
+            <a href="/wishlist" class="bottom-nav-item {{ request()->routeIs('wishlist') ? 'active' : '' }}"
+               aria-label="Wishlist" x-data>
+                <div class="bottom-nav-icon-wrap relative">
+                    <i class="ri-heart-{{ request()->routeIs('wishlist') ? 'fill' : 'line' }}"></i>
+                    <span x-show="$store.wishlist.count > 0" x-text="$store.wishlist.count" class="absolute -top-1 -right-2 bg-red-500 text-white min-w-[14px] h-[14px] rounded-full flex items-center justify-center text-[9px] font-bold px-1" x-cloak></span>
+                </div>
+                <span class="bottom-nav-label">Wishlist</span>
+            </a>
+
         </div>
     </div>
 </nav>

@@ -47,6 +47,42 @@
 
     {{-- Alpine.js --}}
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('wishlist', {
+                items: JSON.parse(localStorage.getItem('wishlist') || '[]'),
+                
+                toggle(product) {
+                    const index = this.items.findIndex(i => i.id === product.id);
+                    if (index > -1) {
+                        this.items.splice(index, 1);
+                    } else {
+                        // Simpan data esensial untuk render kartu produk dengan fallback support
+                        this.items.push({
+                            id: product.id,
+                            name: product.name || product.title || 'Produk Custom',
+                            price: product.price || 0,
+                            oldPrice: product.oldPrice || product.old_price || null,
+                            image: product.image || product.thumbnail || 'https://images.unsplash.com/photo-1542831371-29b0f74f9713?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+                        });
+                    }
+                    this.save();
+                },
+                
+                has(id) {
+                    return this.items.some(i => i.id === id);
+                },
+                
+                get count() {
+                    return this.items.length;
+                },
+                
+                save() {
+                    localStorage.setItem('wishlist', JSON.stringify(this.items));
+                }
+            });
+        });
+    </script>
 
     {{-- Centralized CSS --}}
     <link rel="stylesheet" href="{{ asset('css/templatenesia.css') }}">
@@ -68,7 +104,6 @@
             }
         }
 
-        /* NProgress-like top loading bar */
         #page-loader {
             position: fixed;
             top: 0;
@@ -112,12 +147,10 @@
     <script>
         const loader = document.getElementById('page-loader');
 
-        // Show loader on navigation
         document.addEventListener('click', function(e) {
             const link = e.target.closest('a');
             if (!link) return;
             const href = link.getAttribute('href');
-            // Only intercept same-origin, non-anchor, non-external links
             if (!href || href.startsWith('#') || href.startsWith('javascript') || href.startsWith('mailto') || href.startsWith('tel')) return;
             if (link.target === '_blank') return;
             try {
@@ -129,14 +162,12 @@
             loader.classList.add('loading');
         });
 
-        // Mark as done when page is fully loaded
         window.addEventListener('pageshow', function() {
             loader.classList.remove('loading');
             loader.classList.add('done');
             setTimeout(() => { loader.style.width = '0%'; loader.classList.remove('done'); }, 450);
         });
 
-        // Also handle form submissions
         document.addEventListener('submit', function() {
             loader.classList.remove('done');
             loader.classList.add('loading');

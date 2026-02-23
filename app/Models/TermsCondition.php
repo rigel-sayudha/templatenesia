@@ -6,5 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class TermsCondition extends Model
 {
-    //
+    protected $fillable = [
+        'content',
+        'is_active',
+    ];
 }

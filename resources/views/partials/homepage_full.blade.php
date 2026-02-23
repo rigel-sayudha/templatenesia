@@ -20,6 +20,13 @@
             <a href="/guide" class="text-slate-900 hover:text-iosBlue font-semibold text-sm transition-colors">
                 <i class="ri-book-line mr-2"></i>Panduan
             </a>
+            <a href="/orders" class="text-slate-900 hover:text-iosBlue font-semibold text-sm transition-colors">
+                <i class="ri-file-list-line mr-2"></i>Pesanan
+            </a>
+            <a href="/wishlist" class="text-slate-900 hover:text-iosBlue font-semibold text-sm transition-colors relative" x-data>
+                <i class="fa-regular fa-heart mr-2"></i>Wishlist
+                <span x-show="$store.wishlist.count > 0" x-text="$store.wishlist.count" class="absolute -top-1 -right-4 bg-red-500 text-white min-w-[16px] h-4 rounded-full flex items-center justify-center text-[10px] font-bold px-1" x-cloak></span>
+            </a>
         </nav>
 
         <!-- Button di kanan -->
@@ -31,7 +38,6 @@
 </header>
 
 <main class="w-full max-w-screen-xl mx-auto px-4 sm:px-6 pt-32 space-y-24">
-    <!-- The rest of the original Homepage.html body content (Vue app and markup) inlined below -->
     <div id="app" class="pb-10">
 
             <section class="text-center space-y-8">
@@ -77,26 +83,28 @@
                     <a v-for="(prod, i) in filteredPopular" :key="prod.name" :href="'/product?id=' + prod.id" class="group bg-white rounded-2xl shadow-soft hover:shadow-xl border border-transparent hover:border-iosBlue transition-all duration-300 hover:-translate-y-2 cursor-pointer block no-underline overflow-hidden">
                         <div class="relative aspect-square rounded-t-2xl overflow-hidden bg-gradient-to-br from-iosBlue/10 to-iosPurple/10">
                             <img :src="prod.image" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" alt="Cover">
-                            
-                            <!-- Category Badge -->
+
                             <div class="absolute top-3 left-3 bg-iosBlue/90 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-md">
                                 @{{ prod.category || 'Produk' }}
                             </div>
                             
-                            <!-- Discount Badge -->
                             <div v-if="prod.oldPrice" class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow-md flex items-center gap-1">
                                 @{{ Math.round((1 - prod.price/prod.oldPrice) * 100) }}% OFF
                             </div>
                             
-                            <!-- Popular Badge -->
                             <div class="absolute bottom-3 left-3 bg-white/90 backdrop-blur-md text-iosBlue text-xs font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-md">
                                 <i class="fa-solid fa-star text-yellow-400 text-xs"></i> Popular
                             </div>
                             
-                            <!-- Rating -->
                             <div class="absolute bottom-3 right-3 bg-yellow-400 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-md">
                                 <i class="fa-solid fa-star"></i> @{{ prod.rating }}
                             </div>
+
+                            <button @click.prevent="toggleWishlist(prod)" 
+                                :class="wishlistIds.includes(prod.id) ? 'bg-white text-red-500' : 'bg-iosBlue text-white group-hover:bg-iosPurple'"
+                                class="absolute top-12 right-3 w-8 h-8 rounded-full flex items-center justify-center shadow-md group-hover:scale-110 transition-all z-20">
+                                <i class="fa-solid fa-heart text-xs" :class="wishlistIds.includes(prod.id) ? 'text-red-500' : 'text-white'"></i>
+                            </button>
                         </div>
                         
                         <div class="p-4">
@@ -158,9 +166,11 @@
                             
                             <img :src="prod.image" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                             
-                            <div class="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-iosBlue text-white flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
-                                <i class="fa-solid fa-heart text-xs"></i>
-                            </div>
+                            <button @click.prevent="toggleWishlist(prod)" 
+                                :class="wishlistIds.includes(prod.id) ? 'bg-white text-red-500' : 'bg-iosBlue text-white group-hover:bg-iosPurple'"
+                                class="absolute bottom-2 right-2 w-8 h-8 rounded-full flex items-center justify-center shadow-md group-hover:scale-110 transition-all z-20">
+                                <i class="fa-solid fa-heart text-xs" :class="wishlistIds.includes(prod.id) ? 'text-red-500' : 'text-white'"></i>
+                            </button>
                         </div>
                         <div class="p-3">
                             <h4 class="font-heading font-extrabold text-slate-900 text-base md:text-lg leading-snug mb-1 line-clamp-2 h-10">@{{ prod.name }}</h4>
@@ -278,6 +288,15 @@
 
                 const newProducts = ref(@json($products_js ?? []));
 
+                // Wihslist logic sync to Alpine Window Store
+                const wishlistIds = ref(JSON.parse(localStorage.getItem('wishlist') || '[]').map(i => i.id));
+                const toggleWishlist = (prod) => {
+                    if (window.Alpine) {
+                        window.Alpine.store('wishlist').toggle(prod);
+                        wishlistIds.value = window.Alpine.store('wishlist').items.map(i => i.id);
+                    }
+                };
+
                 // 2. REALTIME SEARCH LOGIC
                 const filteredPopular = computed(() => {
                     if (!searchQuery.value) return popularProducts.value;
@@ -293,7 +312,6 @@
                     );
                 });
 
-                // 3. OTHER DATA
                 const benefits = [
                     { title: "100% Editable", desc: "File format Ms Word & Excel.", icon: "ri-file-edit-line" },
                     { title: "Instant Download", desc: "Link file otomatis masuk via WA.", icon: "ri-download-cloud-2-line" },
@@ -344,8 +362,9 @@
                     searchQuery, whatsappLink, activeFaq,
                     benefits, popularProducts, newProducts, socials,
                     mediaLogos, testimonials, faqs,
-                    filteredPopular, filteredNew, // Exported for v-for
-                    formatPrice, getInitials, toggleFaq, resetSearch
+                    filteredPopular, filteredNew, 
+                    formatPrice, getInitials, toggleFaq, resetSearch,
+                    wishlistIds, toggleWishlist
                 }
             }
         }).mount('#app');

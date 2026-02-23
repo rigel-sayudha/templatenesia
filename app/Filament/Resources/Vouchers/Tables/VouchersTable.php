@@ -2,14 +2,10 @@
 
 namespace App\Filament\Resources\Vouchers\Tables;
 
+use App\Filament\Resources\Vouchers\Schemas\VoucherForm;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Toggle;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BooleanColumn;
 use Filament\Tables\Table;
@@ -46,38 +42,9 @@ class VouchersTable
                 EditAction::make()
                     ->label('Ubah')
                     ->modalHeading('Ubah Voucher')
-                    ->modalSubmitActionLabel('Simpan')
-                    ->modalCancelActionLabel('Batal')
-                    ->modalWidth('2xl')
-                    ->form([
-                        TextInput::make('code')
-                            ->label('Kode Voucher')
-                            ->required()
-                            ->maxLength(255),
-                        Textarea::make('description')
-                            ->label('Deskripsi')
-                            ->rows(3),
-                        Select::make('type')
-                            ->label('Tipe')
-                            ->options([
-                                'percentage' => 'Persentase (%)',
-                                'nominal' => 'Nominal (Rp)',
-                            ])
-                            ->required(),
-                        TextInput::make('value')
-                            ->label('Nilai')
-                            ->numeric()
-                            ->required(),
-                        TextInput::make('usage_limit')
-                            ->label('Batas Penggunaan')
-                            ->numeric(),
-                        DatePicker::make('start_date')
-                            ->label('Tanggal Mulai'),
-                        DatePicker::make('end_date')
-                            ->label('Tanggal Berakhir'),
-                        Toggle::make('is_active')
-                            ->label('Aktif'),
-                    ]),
+                    ->modalFooterActions(fn (): array => [])
+                    ->modalWidth('4xl')
+                    ->form(VoucherForm::schema()),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
