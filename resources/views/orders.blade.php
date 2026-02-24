@@ -134,9 +134,7 @@
         @endif
     </div>
 
-    <!-- Modal Popup Detail Pesanan -->
     <div x-cloak x-show="showDetail" class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <!-- Backdrop -->
         <div x-show="showDetail" 
              x-transition:enter="ease-out duration-300" 
              x-transition:enter-start="opacity-0" 
@@ -147,7 +145,6 @@
              @click="closeDetail"
              class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"></div>
 
-        <!-- Modal Panel -->
         <div x-show="showDetail" 
              x-transition:enter="ease-out duration-300" 
              x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
@@ -159,15 +156,12 @@
             
             <template x-if="selectedOrder">
                 <div>
-                    <!-- Header -->
                     <div class="bg-slate-50 border-b border-slate-100 px-6 py-5 flex items-center justify-between">
                         <h3 class="font-heading text-xl font-bold text-slate-900" id="modal-title">Detail Pesanan</h3>
                         <button @click="closeDetail" class="text-slate-400 hover:text-red-500 bg-white hover:bg-red-50 w-8 h-8 rounded-full flex items-center justify-center transition-colors shadow-sm">
                             <i class="ri-close-line text-xl"></i>
                         </button>
                     </div>
-
-                    <!-- Body -->
                     <div class="px-6 py-6 space-y-6">
                         <!-- Info Status -->
                         <div class="flex flex-col items-center justify-center p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
