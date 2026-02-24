@@ -5,7 +5,7 @@ Templatenesia adalah template toko online (e-commerce) berbasis Laravel yang dir
 ## Fitur utama
 - Manajemen produk, kategori, testimonial, FAQ, dan voucher
 - Sistem pemesanan dan notifikasi (email / WhatsApp channel)
-- Halaman checkout dan integrasi payment gateway (contoh: Midtrans)
+- Halaman checkout dan integrasi payment gateway 
 - Panel admin sederhana menggunakan Filament
 - Seeder dan migrasi untuk data contoh
 
@@ -52,11 +52,9 @@ php artisan serve
 6. Akses aplikasi di `http://127.0.0.1:8000`
 
 ## Konfigurasi tambahan
-- Atur kredensial layanan di `config/services.php` dan `.env` (contoh: Midtrans, WhatsApp service)
+- Atur kredensial layanan di `config/services.php` dan `.env`
 - Periksa file `database/seeders` untuk data contoh dan akun admin
 
-## Kontribusi
-Perbaikan dan pengembangan fitur sangat dipersilakan. Silakan buat issue atau pull request ke repository utama.
 
 ## Lisensi
 Project ini menggunakan lisensi MIT — lihat `LICENSE` jika tersedia.
