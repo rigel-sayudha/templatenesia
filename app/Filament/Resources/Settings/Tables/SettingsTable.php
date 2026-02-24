@@ -5,10 +5,9 @@ namespace App\Filament\Resources\Settings\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use App\Filament\Resources\Settings\Schemas\SettingForm;
 
 class SettingsTable
 {
@@ -31,18 +30,9 @@ class SettingsTable
                 EditAction::make()
                     ->label('Ubah')
                     ->modalHeading('Ubah Pengaturan')
-                    ->modalSubmitActionLabel('Simpan')
-                    ->modalCancelActionLabel('Batal')
-                    ->modalWidth('2xl')
-                    ->form([
-                        TextInput::make('key')
-                            ->label('Kunci Pengaturan')
-                            ->required()
-                            ->maxLength(255),
-                        Textarea::make('value')
-                            ->label('Nilai')
-                            ->rows(4),
-                    ]),
+                    ->modalWidth('4xl')
+                    ->modalFooterActions(fn (): array => [])
+                    ->form(SettingForm::schema()),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

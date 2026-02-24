@@ -6,11 +6,11 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Toggle;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BooleanColumn;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use App\Filament\Resources\TermsConditions\Schemas\TermsConditionForm;
 
 class TermsConditionsTable
 {
@@ -26,23 +26,16 @@ class TermsConditionsTable
                     ->sortable(),
             ])
             ->filters([
-                //
+                TernaryFilter::make('is_active')
+                    ->label('Status Aktif'),
             ])
             ->recordActions([
                 EditAction::make()
                     ->label('Ubah')
                     ->modalHeading('Ubah Syarat & Ketentuan')
-                    ->modalSubmitActionLabel('Simpan')
-                    ->modalCancelActionLabel('Batal')
-                    ->modalWidth('2xl')
-                    ->form([
-                        Textarea::make('content')
-                            ->label('Konten')
-                            ->required()
-                            ->rows(6),
-                        Toggle::make('is_active')
-                            ->label('Aktif'),
-                    ]),
+                    ->modalWidth('4xl')
+                    ->modalFooterActions(fn (): array => [])
+                    ->form(TermsConditionForm::schema()),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

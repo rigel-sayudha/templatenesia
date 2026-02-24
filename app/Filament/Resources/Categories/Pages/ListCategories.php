@@ -3,9 +3,8 @@
 namespace App\Filament\Resources\Categories\Pages;
 
 use App\Filament\Resources\Categories\CategoryResource;
+use App\Filament\Resources\Categories\Schemas\CategoryForm;
 use Filament\Actions\CreateAction;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
 use Filament\Resources\Pages\ListRecords;
 
 class ListCategories extends ListRecords
@@ -18,20 +17,9 @@ class ListCategories extends ListRecords
             CreateAction::make()
                 ->label('+ Buat Category')
                 ->modalHeading('Buat Kategori Baru')
-                ->modalSubmitActionLabel('Buat')
-                ->modalCancelActionLabel('Batal')
-                ->modalWidth('md')
-                ->form([
-                    TextInput::make('name')
-                        ->label('Nama Kategori')
-                        ->required()
-                        ->maxLength(255),
-                    
-                    Textarea::make('description')
-                        ->label('Deskripsi')
-                        ->rows(3)
-                        ->nullable(),
-                ]),
+                ->modalWidth('4xl')
+                ->modalFooterActions(fn (): array => [])
+                ->form(CategoryForm::schema()),
         ];
     }
 }

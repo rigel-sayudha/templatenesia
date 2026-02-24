@@ -55,7 +55,6 @@
     </div>
 </header>
 
-<!-- Content Wrapper -->
 <div class="min-h-screen bg-gray-50 py-8 pt-32">
         <div x-data="checkoutApp()" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             
@@ -99,7 +98,6 @@
                             </div>
                         </div>
 
-                        <!-- Manual Transfer Details -->
                         <div x-show="form.paymentMethod === 'manual'" x-transition class="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 space-y-3">
                             <h4 class="font-semibold text-gray-900 mb-3">
                                 <i class="ri-bank-card-line mr-2"></i>Detail Rekening Bank
@@ -123,7 +121,6 @@
                                 </div>
                             </div>
 
-                            <!-- Transfer Instructions -->
                             <div class="mt-6 pt-6 border-t border-blue-200">
                                 <h5 class="font-semibold text-gray-900 mb-3">Langkah-langkah:</h5>
                                 <ol class="list-decimal list-inside space-y-2 text-sm text-gray-700">
@@ -135,24 +132,22 @@
                             </div>
                         </div>
 
-                        <!-- Midtrans Details -->
                         <div x-show="form.paymentMethod === 'midtrans'" x-transition class="bg-purple-50 border-2 border-purple-200 rounded-lg p-4 space-y-3">
                             <h4 class="font-semibold text-gray-900 mb-3">
                                 <i class="ri-credit-card-line mr-2"></i>Pembayaran melalui Midtrans
                             </h4>
                             <p class="text-sm text-gray-700 mb-4">Pesanan Anda telah dibuat. Silakan lakukan pembayaran melalui tombol di bawah.</p>
                             <div x-show="paymentData.paymentUrl">
-                                <a :href="paymentData.paymentUrl" target="_blank" class="block w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded text-center transition">
-                                    <i class="ri-external-link-line mr-2"></i>Lanjutkan Pembayaran
+                                <a :href="paymentData.paymentUrl" class="block w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded text-center transition">
+                                    <i class="ri-external-link-line mr-2"></i>Lanjutkan ke Midtrans Snap
                                 </a>
-                                <p class="text-xs text-gray-600 text-center mt-2">Anda akan diarahkan ke halaman pembayaran Midtrans</p>
+                                <p class="text-xs text-gray-600 text-center mt-2">Anda akan dialihkan ke layar aman pembayaran resmi Midtrans</p>
                             </div>
                             <div x-show="!paymentData.paymentUrl" class="bg-red-50 border border-red-200 rounded p-3">
-                                <p class="text-sm text-red-700"><i class="ri-alert-line mr-2"></i>Terjadi kesalahan saat membuat transaksi Midtrans. Silakan hubungi admin untuk bantuan.</p>
+                                <p class="text-sm text-red-700"><i class="ri-alert-line mr-2"></i>Link Pembayaran Midtrans batal ditarik. Hubungi Admin.</p>
                             </div>
                         </div>
 
-                        <!-- Admin Contact -->
                         <div class="bg-slate-50 rounded-lg p-4 border border-slate-200">
                             <p class="text-sm text-gray-700 mb-3"><i class="ri-question-line mr-2 text-iosBlue"></i><span class="font-semibold">Pertanyaan?</span> Hubungi admin kami:</p>
                             <a href="https://wa.me/6287751299911" target="_blank" class="inline-flex items-center gap-2 bg-slate-900 hover:bg-iosBlue text-white px-4 py-2 rounded font-semibold text-sm transition">
@@ -161,9 +156,9 @@
                         </div>
                     </div>
                 </div>
+            </div> 
+
             <form @submit.prevent="validateAndShowTnc" id="checkoutForm" class="space-y-6" x-show="!paymentSuccess" x-transition>
-                
-                <!-- Top Row: Product Summary & Order Summary -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     
                     <!-- Product Summary -->
@@ -171,19 +166,16 @@
                         <h3 class="text-lg font-bold mb-4 underline-accent">Ringkasan Produk</h3>
                         
                         <div class="flex gap-4 items-start">
-                            <!-- Product Image -->
                             <div class="w-20 h-20 rounded-lg bg-gradient-to-br from-iosBlue to-iosPurple flex items-center justify-center text-white text-2xl flex-shrink-0">
                                 <i class="fa-solid fa-box"></i>
                             </div>
-                            
-                            <!-- Product Info -->
+
                             <div class="flex-1">
                                 <h4 class="font-bold text-gray-900 text-sm" x-text="product.name"></h4>
                                 <p class="text-xs text-gray-600 mt-1">Varian yang dipilih:</p>
                                 <p class="text-xs text-iosBlue font-medium">Akun: Invite | Durasi: 1 Bulan</p>
                             </div>
                             
-                            <!-- Price -->
                             <div class="text-right flex-shrink-0">
                                 <p class="text-xs text-red-500 line-through font-medium" x-text="formatPrice(product.oldPrice)"></p>
                                 <p class="text-lg font-bold text-gray-900" x-text="formatPrice(product.price)"></p>
@@ -372,7 +364,8 @@
                         <button 
                             @click.prevent="validateAndShowTnc"
                             type="button"
-                            :disabled="!form.agreeTerms || loading"
+                            :class="{'opacity-50 cursor-not-allowed': loading, 'hover:scale-[1.02]': !loading}"
+                            :disabled="loading"
                             class="w-full bg-slate-900 hover:bg-iosBlue text-white font-bold px-6 py-4 rounded-xl transition-all shadow-lg hover:shadow-xl active:scale-[0.98] flex items-center justify-center group mt-6 relative overflow-hidden"
                         >
                             <div class="absolute inset-0 w-1/4 h-full bg-white/20 skew-x-12 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
@@ -387,9 +380,6 @@
                 </div>
 
             </form>
-
-        </div>
-    </div>
 
     <!-- Modal Syarat & Ketentuan (T&C) Checkout -->
     @if($termsAndConditions)
@@ -455,6 +445,9 @@
         </div>
     </div>
     @endif
+
+        </div>
+    </div>
 <script>
     function checkoutApp() {
         return {
@@ -488,8 +481,8 @@
                 this.processCheckout();
             },
             product: {
-                name: '{{ $product->title ?? "Paket SOP" }}',
-                description: '{{ $product->description ?? "Admin Profile | Dukungan Lengkap | Editable" }}',
+                name: @json($product->name ?? "Paket SOP"),
+                description: @json($product->description ?? "Admin Profile | Dukungan Lengkap | Editable"),
                 price: {{ $product->price ?? 15000 }},
                 oldPrice: {{ $product->old_price ?? 75000 }},
             },
@@ -498,7 +491,7 @@
                 email: '',
                 phone: '',
                 paymentMethod: 'manual',
-                bankCode: '{{ $manualPaymentMethods->first()?->bank_code ?? "" }}',
+                bankCode: @json($manualPaymentMethods->first()?->bank_code ?? ""),
                 agreeTerms: false,
             },
             formatPrice(value) {
@@ -562,7 +555,7 @@
                     email: '',
                     phone: '',
                     paymentMethod: 'manual',
-                    bankCode: '{{ $manualPaymentMethods->first()?->bank_code ?? "" }}',
+                    bankCode: @json($manualPaymentMethods->first()?->bank_code ?? ""),
                     agreeTerms: false,
                 };
             }

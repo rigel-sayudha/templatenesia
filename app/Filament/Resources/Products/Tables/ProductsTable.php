@@ -11,14 +11,12 @@ use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Category;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Toggle;
+use App\Filament\Resources\Products\Schemas\ProductForm;
 
 class ProductsTable
 {
@@ -54,6 +52,11 @@ class ProductsTable
                     ->label('Semua')
                     ->query(fn (Builder $query) => $query)
                     ->default(),
+                SelectFilter::make('category_id')
+                    ->relationship('category', 'name')
+                    ->label('Kategori'),
+                TernaryFilter::make('is_active')
+                    ->label('Status Aktif'),
                 Filter::make('has_discount')
                     ->label('Diskon')
                     ->query(fn (Builder $query) => $query->whereNotNull('discount_price')->where('discount_price', '<', 'price')),
@@ -65,44 +68,9 @@ class ProductsTable
                 EditAction::make()
                     ->label('Ubah')
                     ->modalHeading('Ubah product')
-                    ->modalSubmitActionLabel('Simpan')
-                    ->modalCancelActionLabel('Batal')
-                    ->modalWidth('2xl')
-                    ->form([
-                        Select::make('category_id')
-                            ->label('Kategori')
-                            ->options(Category::pluck('name', 'id'))
-                            ->required()
-                            ->searchable()
-                            ->preload(),
-                        TextInput::make('name')
-                            ->label('Nama Produk')
-                            ->required()
-                            ->maxLength(255),
-                        Textarea::make('description')
-                            ->label('Deskripsi')
-                            ->rows(3),
-                        TextInput::make('price')
-                            ->label('Harga Normal')
-                            ->numeric()
-                            ->required()
-                            ->prefix('Rp'),
-                        TextInput::make('discount_price')
-                            ->label('Harga Diskon')
-                            ->numeric()
-                            ->nullable()
-                            ->prefix('Rp'),
-                        FileUpload::make('image')
-                            ->label('Gambar Produk')
-                            ->image()
-                            ->disk('public')
-                            ->directory('products')
-                            ->previewable(true),
-                        Toggle::make('is_active')
-                            ->label('Produk Aktif'),
-                        Toggle::make('is_popular')
-                            ->label('Populer'),
-                    ]),
+                    ->modalWidth('4xl')
+                    ->modalFooterActions(fn (): array => [])
+                    ->form(ProductForm::schema()),
                 DeleteAction::make()
                     ->modalHeading('Delete Product')
                     ->modalDescription('Apakah Anda yakin ingin menghapus produk ini?')

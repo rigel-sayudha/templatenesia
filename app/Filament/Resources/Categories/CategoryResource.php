@@ -36,7 +36,6 @@ class CategoryResource extends Resource
     {
         return $schema
             ->schema([
-                // Forms are defined in individual pages
             ]);
     }
 

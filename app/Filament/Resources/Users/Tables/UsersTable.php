@@ -5,9 +5,11 @@ namespace App\Filament\Resources\Users\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Table;
+use App\Filament\Resources\Users\Schemas\UserForm;
 
 class UsersTable
 {
@@ -29,26 +31,18 @@ class UsersTable
                     ->sortable(),
             ])
             ->filters([
-                //
+                Filter::make('verified')
+                    ->label('Terverifikasi')
+                    ->query(fn (Builder $query) => $query->whereNotNull('email_verified_at'))
+                    ->toggle(),
             ])
             ->recordActions([
                 EditAction::make()
                     ->label('Ubah')
                     ->modalHeading('Ubah User')
-                    ->modalSubmitActionLabel('Simpan')
-                    ->modalCancelActionLabel('Batal')
-                    ->modalWidth('2xl')
-                    ->form([
-                        TextInput::make('name')
-                            ->label('Nama')
-                            ->required()
-                            ->maxLength(255),
-                        TextInput::make('email')
-                            ->label('Email')
-                            ->email()
-                            ->required()
-                            ->maxLength(255),
-                    ]),
+                    ->modalWidth('4xl')
+                    ->modalFooterActions(fn (): array => [])
+                    ->form(UserForm::schema()),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

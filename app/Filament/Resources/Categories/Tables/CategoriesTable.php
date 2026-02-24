@@ -5,9 +5,10 @@ namespace App\Filament\Resources\Categories\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Tables\Filters\Filter;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Table;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
+use App\Filament\Resources\Categories\Schemas\CategoryForm;
 
 class CategoriesTable
 {
@@ -37,24 +38,19 @@ class CategoriesTable
                     })
                     ->color('gray'),
             ])
+            ->filters([
+                Filter::make('has_products')
+                    ->label('Memiliki Produk')
+                    ->query(fn (Builder $query) => $query->whereHas('products'))
+                    ->toggle(),
+            ])
             ->recordActions([
                 EditAction::make()
                     ->label('Ubah')
                     ->modalHeading('Edit Kategori')
-                    ->modalSubmitActionLabel('Simpan Perubahan')
-                    ->modalCancelActionLabel('Batal')
-                    ->modalWidth('md')
-                    ->form([
-                        TextInput::make('name')
-                            ->label('Nama Kategori')
-                            ->required()
-                            ->maxLength(255),
-                        
-                        Textarea::make('description')
-                            ->label('Deskripsi')
-                            ->rows(3)
-                            ->nullable(),
-                    ]),
+                    ->modalWidth('4xl')
+                    ->modalFooterActions(fn (): array => [])
+                    ->form(CategoryForm::schema()),
 
                 DeleteAction::make()
                     ->label('Hapus')

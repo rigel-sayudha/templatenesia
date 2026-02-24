@@ -3,9 +3,8 @@
 namespace App\Filament\Resources\Settings\Pages;
 
 use App\Filament\Resources\Settings\SettingResource;
+use App\Filament\Resources\Settings\Schemas\SettingForm;
 use Filament\Actions\CreateAction;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
 use Filament\Resources\Pages\ListRecords;
 
 class ListSettings extends ListRecords
@@ -18,19 +17,9 @@ class ListSettings extends ListRecords
             CreateAction::make()
                 ->label('+ Tambah Pengaturan')
                 ->modalHeading('Tambah Pengaturan Baru')
-                ->modalSubmitActionLabel('Buat')
-                ->modalCancelActionLabel('Batal')
-                ->modalWidth('2xl')
-                ->form([
-                    TextInput::make('key')
-                        ->label('Kunci Pengaturan')
-                        ->required()
-                        ->unique('settings', 'key')
-                        ->maxLength(255),
-                    Textarea::make('value')
-                        ->label('Nilai')
-                        ->rows(4),
-                ]),
+                ->modalWidth('4xl')
+                ->modalFooterActions(fn (): array => [])
+                ->form(SettingForm::schema()),
         ];
     }
 }

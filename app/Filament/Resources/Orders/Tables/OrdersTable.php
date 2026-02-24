@@ -5,10 +5,10 @@ namespace App\Filament\Resources\Orders\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use App\Filament\Resources\Orders\Schemas\OrderForm;
 
 class OrdersTable
 {
@@ -37,46 +37,25 @@ class OrdersTable
                     ->sortable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('product_id')
+                    ->relationship('product', 'name')
+                    ->label('Produk'),
+                SelectFilter::make('status')
+                    ->label('Status')
+                    ->options([
+                        'pending' => 'Pending',
+                        'success' => 'Sukses',
+                        'failed' => 'Gagal',
+                        'cancelled' => 'Dibatalkan',
+                    ]),
             ])
             ->recordActions([
                 EditAction::make()
                     ->label('Ubah')
                     ->modalHeading('Ubah Order')
-                    ->modalSubmitActionLabel('Simpan')
-                    ->modalCancelActionLabel('Batal')
-                    ->modalWidth('2xl')
-                    ->form([
-                        Select::make('product_id')
-                            ->label('Produk')
-                            ->relationship('product', 'name'),
-                        TextInput::make('quantity')
-                            ->label('Jumlah')
-                            ->numeric(),
-                        TextInput::make('total')
-                            ->label('Total')
-                            ->numeric(),
-                        Select::make('status')
-                            ->label('Status')
-                            ->options([
-                                'pending' => 'Pending',
-                                'processing' => 'Diproses',
-                                'shipped' => 'Dikirim',
-                                'completed' => 'Selesai',
-                                'cancelled' => 'Dibatalkan',
-                            ]),
-                        TextInput::make('customer_name')
-                            ->label('Nama Pelanggan')
-                            ->maxLength(255),
-                        TextInput::make('customer_phone')
-                            ->label('Telepon Pelanggan')
-                            ->tel()
-                            ->maxLength(255),
-                        TextInput::make('customer_email')
-                            ->label('Email Pelanggan')
-                            ->email()
-                            ->maxLength(255),
-                    ]),
+                    ->modalWidth('4xl')
+                    ->modalFooterActions(fn (): array => [])
+                    ->form(OrderForm::schema()),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

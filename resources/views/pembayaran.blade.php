@@ -41,7 +41,6 @@
 
     <div x-data="checkoutApp()" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-28">
         <form @submit.prevent="processCheckout" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Left Column: Checkout Form -->
             <div class="lg:col-span-2 space-y-6">
                 
                 <!-- Product Summary -->

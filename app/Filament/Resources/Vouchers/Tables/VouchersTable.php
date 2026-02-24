@@ -8,6 +8,8 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BooleanColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
 class VouchersTable
@@ -35,7 +37,14 @@ class VouchersTable
                     ->sortable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('type')
+                    ->label('Tipe')
+                    ->options([
+                        'percentage' => 'Persentase',
+                        'fixed' => 'Nominal',
+                    ]),
+                TernaryFilter::make('is_active')
+                    ->label('Status Aktif'),
             ])
             ->headerActions([])
             ->recordActions([

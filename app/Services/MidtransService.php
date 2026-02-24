@@ -38,14 +38,14 @@ class MidtransService
         $payload = [
             'transaction_details' => [
                 'order_id' => $order->invoice_id,
-                'gross_amount' => $order->total,
+                'gross_amount' => (int) $order->total,
             ],
             'item_details' => [
                 [
                     'id' => $order->product_id,
-                    'price' => $order->total,
-                    'quantity' => $order->quantity,
-                    'name' => $order->product->title ?? 'Product',
+                    'price' => (int) $order->total,
+                    'quantity' => (int) $order->quantity,
+                    'name' => $order->product->name ?? 'Product',
                 ]
             ],
         ];

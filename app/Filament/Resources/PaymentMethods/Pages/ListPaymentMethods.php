@@ -4,12 +4,8 @@ namespace App\Filament\Resources\PaymentMethods\Pages;
 
 use App\Filament\Resources\PaymentMethods\PaymentMethodResource;
 use Filament\Actions\CreateAction;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\FileUpload;
 use Filament\Resources\Pages\ListRecords;
+use App\Filament\Resources\PaymentMethods\Schemas\PaymentMethodForm;
 
 class ListPaymentMethods extends ListRecords
 {
@@ -21,46 +17,9 @@ class ListPaymentMethods extends ListRecords
             CreateAction::make()
                 ->label('+ Tambah Metode')
                 ->modalHeading('Tambah Metode Pembayaran Baru')
-                ->modalSubmitActionLabel('Buat')
-                ->modalCancelActionLabel('Batal')
-                ->modalWidth('2xl')
-                ->form([
-                    TextInput::make('name')
-                        ->label('Nama Metode Pembayaran')
-                        ->required()
-                        ->maxLength(255),
-                    FileUpload::make('logo')
-                        ->label('Logo Bank/Metode')
-                        ->image()
-                        ->disk('public')
-                        ->directory('payment-method-logos')
-                        ->maxSize(2048),
-                    Textarea::make('description')
-                        ->label('Deskripsi')
-                        ->rows(3),
-                    Select::make('type')
-                        ->label('Tipe')
-                        ->options([
-                            'manual' => 'Manual',
-                            'automatic' => 'Otomatis',
-                        ])
-                        ->default('manual'),
-                    TextInput::make('bank_code')
-                        ->label('Kode Bank')
-                        ->maxLength(255),
-                    TextInput::make('account_number')
-                        ->label('Nomor Rekening')
-                        ->maxLength(255),
-                    TextInput::make('account_name')
-                        ->label('Nama Pemilik Rekening')
-                        ->maxLength(255),
-                    TextInput::make('sort_order')
-                        ->label('Urutan Tampil')
-                        ->numeric()
-                        ->default(0),
-                    Toggle::make('is_active')
-                        ->label('Aktif'),
-                ]),
+                ->modalWidth('4xl')
+                ->modalFooterActions(fn (): array => [])
+                ->form(PaymentMethodForm::schema()),
         ];
     }
 }

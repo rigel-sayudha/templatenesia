@@ -43,11 +43,15 @@ class CheckoutController extends Controller
             return response()->json(['ok' => false, 'message' => 'Product not found'], 404);
         }
 
-        $sellingPrice = ($product->discount_price && $product->discount_price < $product->price) 
-            ? $product->discount_price 
-            : $product->price;
+        $discountPrice = (int) $product->discount_price;
+        $normalPrice = (int) $product->price;
         
-        $total = ($sellingPrice ?? 0) * $qty;
+        $sellingPrice = ($discountPrice > 0 && $discountPrice < $normalPrice) 
+            ? $discountPrice 
+            : $normalPrice;
+        
+        $total = $sellingPrice * $qty;
+        \Log::info('Checkout Calc', ['product' => $productId, 'qty' => $qty, 'discount' => $discountPrice, 'normal' => $normalPrice, 'selling' => $sellingPrice, 'total' => $total, 'request_body' => $request->all()]);
         $invoice = 'INV-' . strtoupper(Str::random(8));
 
         $order = Order::create([
@@ -97,6 +101,7 @@ class CheckoutController extends Controller
             try {
                 $tx = $midtrans->createTransaction($order);
             } catch (\Throwable $e) {
+                \Log::error('MIDTRANS FAIL', ['msg' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
                 $tx = null;
             }
             session(['midtrans' => $tx]);
@@ -104,7 +109,8 @@ class CheckoutController extends Controller
             return response()->json([
                 'ok' => true,
                 'invoice' => $invoice,
-                'paymentUrl' => $tx?->redirect_url ?? null,
+                'total' => $total,
+                'paymentUrl' => is_array($tx) ? ($tx['redirect_url'] ?? null) : null,
                 'message' => 'Redirecting to payment gateway...',
             ]);
         } else {
