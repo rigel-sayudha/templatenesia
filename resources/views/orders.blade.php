@@ -102,8 +102,10 @@
                                     <span class="bg-yellow-100 text-yellow-700 text-xs font-bold px-3 py-1 rounded-full flex items-center shadow-sm"><i class="ri-time-line mr-1.5 text-sm"></i> Pending</span>
                                 @elseif($order->status === 'cancelled')
                                     <span class="bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1 rounded-full flex items-center shadow-sm"><i class="ri-file-forbid-line mr-1.5 text-sm"></i> Dibatalkan</span>
-                                @else
+                                @elseif($order->status === 'failed')
                                     <span class="bg-red-100 text-red-700 text-xs font-bold px-3 py-1 rounded-full flex items-center shadow-sm"><i class="ri-close-circle-line mr-1.5 text-sm"></i> Gagal</span>
+                                @else
+                                    <span class="bg-slate-100 text-slate-700 text-xs font-bold px-3 py-1 rounded-full flex items-center shadow-sm"><i class="ri-information-line mr-1.5 text-sm"></i> {{ ucfirst($order->status) }}</span>
                                 @endif
                             </div>
                             
@@ -183,8 +185,11 @@
                             <template x-if="selectedOrder.status === 'cancelled'">
                                 <span class="bg-slate-100 text-slate-700 font-bold px-4 py-1.5 rounded-full flex items-center shadow-sm"><i class="ri-file-forbid-line mr-1.5"></i> Transaksi Dibatalkan</span>
                             </template>
-                            <template x-if="selectedOrder.status !== 'paid' && selectedOrder.status !== 'success' && selectedOrder.status !== 'pending' && selectedOrder.status !== 'cancelled'">
-                                <span class="bg-red-100 text-red-700 font-bold px-4 py-1.5 rounded-full flex items-center shadow-sm"><i class="ri-close-circle-line mr-1.5"></i> <span x-text="selectedOrder.status === 'failed' ? 'Pembayaran Gagal' : selectedOrder.status"></span></span>
+                            <template x-if="selectedOrder.status === 'failed'">
+                                <span class="bg-red-100 text-red-700 font-bold px-4 py-1.5 rounded-full flex items-center shadow-sm"><i class="ri-close-circle-line mr-1.5"></i> Pembayaran Gagal</span>
+                            </template>
+                            <template x-if="selectedOrder.status !== 'paid' && selectedOrder.status !== 'success' && selectedOrder.status !== 'pending' && selectedOrder.status !== 'cancelled' && selectedOrder.status !== 'failed'">
+                                <span class="bg-slate-100 text-slate-700 font-bold px-4 py-1.5 rounded-full flex items-center shadow-sm"><i class="ri-information-line mr-1.5"></i> <span x-text="selectedOrder.status"></span></span>
                             </template>
                         </div>
 
