@@ -62,7 +62,7 @@
                 <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                     <div class="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
                         <h2 class="text-2xl font-bold text-gray-900">Konfirmasi Pesanan</h2>
-                        <button @click="resetForm()" class="text-gray-400 hover:text-gray-600">
+                        <button @click="window.location.href = '/orders'" class="text-gray-400 hover:text-gray-600">
                             <i class="ri-close-line text-2xl"></i>
                         </button>
                     </div>
@@ -187,31 +187,50 @@
                     <div class="bg-white rounded-lg p-6 border-b-2 border-gray-200">
                         <h3 class="text-lg font-bold mb-4 underline-accent">Ringkasan Pesanan</h3>
 
-                        <div class="flex gap-2 mb-6">
+                        <div class="flex gap-2 mb-6" x-show="!appliedVoucher">
                             <input 
                                 type="text" 
+                                x-model="form.voucherCode"
                                 placeholder="Masukan kode voucher"
                                 class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-iosBlue focus:border-transparent outline-none"
                             >
-                            <button type="button" class="bg-iosBlue text-white px-6 py-2 rounded font-semibold text-sm hover:bg-blue-600 transition">
+                            <button type="button" @click="applyVoucherCode" :disabled="loading" class="bg-iosBlue text-white px-6 py-2 rounded font-semibold text-sm hover:bg-blue-600 transition disabled:opacity-50">
                                 Terapkan
+                            </button>
+                        </div>
+
+                        <!-- Info Kupon Berhasil -->
+                        <div x-show="appliedVoucher" x-transition class="mb-6 bg-green-50 border border-green-200 rounded p-3 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <i class="ri-coupon-3-fill text-green-600 text-lg"></i>
+                                <div>
+                                    <p class="text-xs text-slate-500 font-medium">Kupon Diterapkan:</p>
+                                    <p class="text-sm font-bold text-green-700" x-text="appliedVoucher?.code"></p>
+                                </div>
+                            </div>
+                            <button type="button" @click="removeVoucher" class="text-red-500 hover:bg-red-50 p-1.5 rounded-full transition-colors" title="Hapus Kupon">
+                                <i class="ri-close-line text-lg"></i>
                             </button>
                         </div>
 
                         <div class="space-y-3 mb-4">
                             <div class="flex justify-between text-sm">
                                 <span class="text-gray-600">Harga Normal:</span>
-                                <span class="text-red-500 font-semibold line-through" x-text="formatPrice(product.oldPrice)"></span>
+                                <span class="text-slate-400 font-semibold line-through" x-text="formatPrice(product.oldPrice)"></span>
                             </div>
                             <div class="flex justify-between text-sm">
                                 <span class="text-gray-600">Harga Diskon:</span>
                                 <span class="text-gray-900 font-semibold" x-text="formatPrice(product.price)"></span>
                             </div>
+                            <div class="flex justify-between text-sm" x-show="appliedVoucher">
+                                <span class="text-green-600">Potongan Kupon:</span>
+                                <span class="text-green-600 font-bold" x-text="'- ' + formatPrice(product.price - finalTotal)"></span>
+                            </div>
                         </div>
 
                         <div class="border-t border-b py-4 mb-6 flex justify-between">
                             <span class="font-bold text-gray-900">Total:</span>
-                            <span class="text-2xl font-bold text-iosBlue" x-text="formatPrice(product.price)"></span>
+                            <span class="text-2xl font-bold text-iosBlue" x-text="formatPrice(finalTotal)"></span>
                         </div>
 
                         <label class="flex items-start gap-2 cursor-pointer text-xs text-gray-600 mb-5">
@@ -493,10 +512,57 @@
                 paymentMethod: 'manual',
                 bankCode: @json($manualPaymentMethods->first()?->bank_code ?? ""),
                 agreeTerms: false,
+                voucherCode: ''
+            },
+            appliedVoucher: null,
+            get finalTotal() {
+                let t = this.product.price;
+                if (this.appliedVoucher) {
+                    if (this.appliedVoucher.type === 'nominal') {
+                        t -= this.appliedVoucher.value;
+                    } else if (this.appliedVoucher.type === 'percentage') {
+                        t -= t * (this.appliedVoucher.value / 100);
+                    }
+                }
+                return t < 0 ? 0 : t;
             },
             formatPrice(value) {
-                if (!value) return 'Rp 0';
-                return 'Rp ' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                if (!value && value !== 0) return 'Rp 0';
+                return 'Rp ' + Math.round(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            },
+            async applyVoucherCode() {
+                if (!this.form.voucherCode) {
+                    alert('Silakan masukkan sandi voucher.');
+                    return;
+                }
+                this.loading = true;
+                try {
+                    const res = await fetch('/checkout/apply-voucher', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        },
+                        body: JSON.stringify({ code: this.form.voucherCode })
+                    });
+                    const data = await res.json();
+                    if (data.ok) {
+                        this.appliedVoucher = data.voucher;
+                        alert(data.message);
+                    } else {
+                        alert(data.message || 'Kupon tidak valid.');
+                        this.form.voucherCode = '';
+                    }
+                } catch (err) {
+                    alert('Gagal memverifikasi kupon.');
+                } finally {
+                    this.loading = false;
+                }
+            },
+            removeVoucher() {
+                this.appliedVoucher = null;
+                this.form.voucherCode = '';
             },
             async processCheckout() {
                 if (!this.form.name || !this.form.email || !this.form.phone) {
@@ -526,18 +592,25 @@
                             phone: this.form.phone,
                             paymentMethod: this.form.paymentMethod,
                             bankCode: this.form.bankCode,
+                            voucherCode: this.appliedVoucher ? this.appliedVoucher.code : null,
                         })
                     });
 
                     const data = await response.json();
                     
                     if (data.ok) {
-                        Object.assign(this.paymentData, data);
-                        this.paymentSuccess = true;
+                        if (data.paymentUrl) {
+                            // Bypass Invoice Modal and redirect straight to Midtrans Snap
+                            window.location.href = data.paymentUrl;
+                        } else {
+                            // Show Invoice Modal for manual payments, with redirection on closing
+                            Object.assign(this.paymentData, data);
+                            this.paymentSuccess = true;
 
-                        setTimeout(() => {
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                        }, 100);
+                            setTimeout(() => {
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }, 100);
+                        }
                     } else {
                         alert('Error: ' + (data.message || 'Terjadi kesalahan'));
                     }
@@ -555,8 +628,9 @@
                     email: '',
                     phone: '',
                     paymentMethod: 'manual',
-                    bankCode: @json($manualPaymentMethods->first()?->bank_code ?? ""),
+                    bankCode: '',
                     agreeTerms: false,
+                    voucherCode: ''
                 };
             }
         }

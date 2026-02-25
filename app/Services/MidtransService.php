@@ -50,8 +50,17 @@ class MidtransService
             ],
         ];
 
-            $response = Http::withBasicAuth($this->serverKey, '')->post($base . '/snap/v1/transactions', $payload);
+        $response = Http::withBasicAuth($this->serverKey, '')->post($base . '/snap/v1/transactions', $payload);
         $json = $response->json();
+
+        if (!isset($json['token'])) {
+            \Log::error('MIDTRANS API ERROR', [
+                'status' => $response->status(), 
+                'response' => $json, 
+                'payload' => $payload,
+                'serverKeyPrefix' => substr($this->serverKey, 0, 5) . '***'
+            ]);
+        }
 
         return [
             'token' => $json['token'] ?? null,

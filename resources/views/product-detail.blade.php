@@ -57,7 +57,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
             <div>
                 <div class="bg-gradient-to-br from-iosBlue/10 to-iosPurple/10 rounded-2xl overflow-hidden aspect-square flex items-center justify-center sticky top-32">
-                    <img src="{{ $product->image ?? 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 500 500%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22500%22 height=%22500%22/%3E%3C/svg%3E' }}" 
+                    <img src="{{ $productData['image'] ?? 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 500 500%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22500%22 height=%22500%22/%3E%3C/svg%3E' }}" 
                          alt="{{ $product->title ?? 'Product' }}"
                          class="w-full h-full object-cover">
                 </div>
@@ -236,30 +236,43 @@
             </div>
         </div>
 
-        <!-- Related Products -->
+        <!-- Produk Terkait -->
         <div class="mb-16">
             <h2 class="font-heading text-3xl font-bold text-slate-900 mb-8">Produk Terkait</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                @for($i = 1; $i <= 4; $i++)
-                    <a href="#" class="group bg-white rounded-2xl shadow-soft hover:shadow-xl border border-transparent hover:border-iosBlue transition-all duration-300 hover:-translate-y-2 cursor-pointer block no-underline overflow-hidden">
-                        <div class="relative aspect-square rounded-t-2xl overflow-hidden bg-gradient-to-br from-iosBlue/10 to-iosPurple/10">
-                            <img src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 300 300%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22300%22 height=%22300%22/%3E%3C/svg%3E" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" alt="Product">
+                @foreach($relatedProducts as $related)
+                    @php
+                        $isSvg = str_starts_with($related['image'], 'data:image');
+                        $imageUrl = $isSvg ? $related['image'] : \Illuminate\Support\Facades\Storage::url($related['image']);
+                    @endphp
+                    <a href="{{ route('product', ['id' => $related['id']]) }}" class="group bg-white rounded-2xl shadow-soft hover:shadow-xl border border-transparent hover:border-iosBlue transition-all duration-300 hover:-translate-y-2 cursor-pointer block no-underline overflow-hidden">
+                        <div class="relative aspect-square rounded-t-2xl overflow-hidden bg-gradient-to-br from-iosBlue/10 to-iosPurple/10 flex items-center justify-center">
+                            @if($isSvg)
+                                <img src="{{ $imageUrl }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" alt="{{ $related['name'] }}">
+                            @else
+                                <img src="{{ $imageUrl }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" alt="{{ $related['name'] }}">
+                            @endif
                             <div class="absolute bottom-3 left-3 bg-white/90 backdrop-blur-md text-iosBlue text-xs font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-md">
                                 <i class="fa-solid fa-star text-yellow-400 text-xs"></i> 4.9
                             </div>
                         </div>
                         <div class="p-4">
-                            <h4 class="font-bold text-slate-900 text-sm line-clamp-2 group-hover:text-iosBlue transition-colors">Produk Terkait {{ $i }}</h4>
+                            <h4 class="font-bold text-slate-900 text-sm line-clamp-2 group-hover:text-iosBlue transition-colors">{{ $related['name'] }}</h4>
                             <p class="text-xs text-slate-500 mb-3">Template Siap Pakai</p>
                             <div class="flex items-end justify-between">
-                                <div class="text-base font-bold text-iosBlue">Rp 49.900</div>
-                                <div class="w-8 h-8 rounded-full bg-iosBlue text-white flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                                <div>
+                                    <div class="text-base font-bold text-iosBlue">Rp {{ number_format($related['price'], 0, ',', '.') }}</div>
+                                    @if(isset($related['oldPrice']))
+                                        <div class="text-xs text-slate-400 line-through">Rp {{ number_format($related['oldPrice'], 0, ',', '.') }}</div>
+                                    @endif
+                                </div>
+                                <div class="w-8 h-8 rounded-full bg-iosBlue text-white flex items-center justify-center shadow-md group-hover:scale-110 transition-transform flex-shrink-0">
                                     <i class="fa-solid fa-arrow-right text-xs"></i>
                                 </div>
                             </div>
                         </div>
                     </a>
-                @endfor
+                @endforeach
             </div>
         </div>
     </div>

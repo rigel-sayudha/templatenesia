@@ -2,61 +2,55 @@
 {{-- Hanya tampil di mobile (md:hidden), sinkron dengan desktop navbar --}}
 @php
     $currentPath = request()->path();
-    $isHome     = $currentPath === '/' || $currentPath === '';
-    $isProducts = str_starts_with($currentPath, 'products');
-    $isGuide    = str_starts_with($currentPath, 'guide');
+    $isHome     = request()->is('/') || request()->routeIs('home');
+    $isProducts = request()->is('products*');
+    $isGuide    = request()->is('guide*');
+    $isOrders   = request()->is('orders*');
+    $isWishlist = request()->routeIs('wishlist');
 @endphp
 
-<nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 z-50" aria-label="Bottom Navigation">
+<nav id="mobile-bottom-nav" class="md:hidden fixed bottom-4 left-4 right-4 z-50" aria-label="Bottom Navigation">
     <div class="glass-bottom-nav">
         <div class="bottom-nav-inner">
 
-            <a href="/" class="bottom-nav-item {{ request()->is('/') || request()->routeIs('home') ? 'active' : '' }}"
+            <a href="/" class="bottom-nav-item {{ $isHome ? 'active' : '' }}"
                aria-label="Beranda">
                 <div class="bottom-nav-icon-wrap">
-                    <i class="ri-home-{{ request()->is('/') ? 'fill' : 'line' }}"></i>
+                    <i class="ri-home-5-{{ $isHome ? 'fill' : 'line' }}"></i>
                 </div>
-                <span class="bottom-nav-label">Beranda</span>
+                <span class="bottom-nav-label">Home</span>
             </a>
 
-            <a href="/products" class="bottom-nav-item {{ request()->is('products*') ? 'active' : '' }}"
+            <a href="/products" class="bottom-nav-item {{ $isProducts ? 'active' : '' }}"
                aria-label="Produk">
                 <div class="bottom-nav-icon-wrap">
-                    <i class="ri-shopping-bag-{{ request()->is('products*') ? 'fill' : 'line' }}"></i>
+                    <i class="ri-shopping-bag-3-{{ $isProducts ? 'fill' : 'line' }}"></i>
                 </div>
                 <span class="bottom-nav-label">Produk</span>
             </a>
 
+            <!-- Floating CTA Center -->
             <a href="https://wa.me/6287751299911" target="_blank"
                class="bottom-nav-cta"
                aria-label="Hubungi Admin via WhatsApp">
                 <div class="bottom-nav-cta-btn">
                     <i class="ri-whatsapp-line"></i>
                 </div>
-                <span class="bottom-nav-label" style="color:#1D1D1F;">Admin</span>
             </a>
 
-            <a href="/guide" class="bottom-nav-item {{ request()->is('guide*') ? 'active' : '' }}"
-               aria-label="Panduan">
-                <div class="bottom-nav-icon-wrap">
-                    <i class="ri-book-{{ request()->is('guide*') ? 'fill' : 'line' }}"></i>
-                </div>
-                <span class="bottom-nav-label">Panduan</span>
-            </a>
-
-            <a href="/orders" class="bottom-nav-item {{ request()->is('orders*') ? 'active' : '' }}"
+            <a href="/orders" class="bottom-nav-item {{ $isOrders ? 'active' : '' }}"
                aria-label="Pesanan Saya">
                 <div class="bottom-nav-icon-wrap">
-                    <i class="ri-file-list-{{ request()->is('orders*') ? 'fill' : 'line' }}"></i>
+                    <i class="ri-file-list-3-{{ $isOrders ? 'fill' : 'line' }}"></i>
                 </div>
-                <span class="bottom-nav-label">Pesanan</span>
+                <span class="bottom-nav-label">History</span>
             </a>
 
-            <a href="/wishlist" class="bottom-nav-item {{ request()->routeIs('wishlist') ? 'active' : '' }}"
+            <a href="/wishlist" class="bottom-nav-item {{ $isWishlist ? 'active' : '' }}"
                aria-label="Wishlist" x-data>
                 <div class="bottom-nav-icon-wrap relative">
-                    <i class="ri-heart-{{ request()->routeIs('wishlist') ? 'fill' : 'line' }}"></i>
-                    <span x-show="$store.wishlist.count > 0" x-text="$store.wishlist.count" class="absolute -top-1 -right-2 bg-red-500 text-white min-w-[14px] h-[14px] rounded-full flex items-center justify-center text-[9px] font-bold px-1" x-cloak></span>
+                    <i class="ri-heart-3-{{ $isWishlist ? 'fill' : 'line' }}"></i>
+                    <span x-show="$store.wishlist.count > 0" x-text="$store.wishlist.count" class="absolute -top-1 -right-2 bg-red-500 text-white min-w-[14px] h-[14px] rounded-full flex items-center justify-center text-[9px] font-bold px-1 ring-2 ring-white" x-cloak></span>
                 </div>
                 <span class="bottom-nav-label">Wishlist</span>
             </a>
@@ -67,69 +61,30 @@
 
 <style>
     #mobile-bottom-nav {
+        /* Extra padding for safe area logic at bottom */
         padding-bottom: env(safe-area-inset-bottom, 0px);
+        filter: drop-shadow(0 10px 25px rgba(139, 92, 246, 0.15));
     }
     .glass-bottom-nav {
-        background: rgba(255, 255, 255, 0.92);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border-top: 1px solid rgba(0, 0, 0, 0.06);
-        box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.06);
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 9999px; /* Pill shape */
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     }
 
     .bottom-nav-inner {
         display: flex;
-        align-items: flex-end;
-        justify-content: space-around;
-        padding: 0.5rem 0.25rem 0.375rem;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.5rem 0.5rem;
         max-width: 480px;
         margin: 0 auto;
+        position: relative;
     }
 
     .bottom-nav-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.15rem;
-        flex: 1;
-        min-width: 0;
-        text-decoration: none;
-        color: #94a3b8;
-        transition: color 0.2s ease;
-        -webkit-tap-highlight-color: transparent;
-    }
-    .bottom-nav-item:active { opacity: 0.7; }
-
-    .bottom-nav-icon-wrap {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 2.25rem;
-        height: 1.75rem;
-        border-radius: 9999px;
-        font-size: 1.3rem;
-        transition: background 0.2s ease, transform 0.15s ease;
-    }
-    .bottom-nav-item:active .bottom-nav-icon-wrap {
-        transform: scale(0.88);
-    }
-
-    .bottom-nav-item.active {
-        color: #007AFF;
-    }
-    .bottom-nav-item.active .bottom-nav-icon-wrap {
-        background: rgba(0, 122, 255, 0.1);
-    }
-
-    .bottom-nav-label {
-        font-size: 0.6rem;
-        font-weight: 600;
-        letter-spacing: 0.01em;
-        line-height: 1;
-        white-space: nowrap;
-    }
-
-    .bottom-nav-cta {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -137,35 +92,88 @@
         flex: 1;
         min-width: 0;
         text-decoration: none;
+        color: #94a3b8; /* Slate-400 */
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        -webkit-tap-highlight-color: transparent;
+        padding: 0.25rem;
+        border-radius: 1rem;
+    }
+
+    .bottom-nav-item:active { 
+        transform: scale(0.92); 
+    }
+
+    .bottom-nav-icon-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 3.5rem;   /* Wide pill for active state */
+        height: 2rem;
+        border-radius: 9999px;
+        font-size: 1.25rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Active State mimicking the Dribbble design (Purple Accent) */
+    .bottom-nav-item.active {
+        color: #8B5CF6; /* Purple-500 */
+    }
+    
+    .bottom-nav-item.active .bottom-nav-icon-wrap {
+        background: rgba(139, 92, 246, 0.12); /* Light Purple pill background */
+        color: #8B5CF6;
+    }
+
+    .bottom-nav-label {
+        font-size: 0.65rem;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+        line-height: 1;
+        white-space: nowrap;
+        transition: font-weight 0.2s;
+    }
+
+    .bottom-nav-item.active .bottom-nav-label {
+        font-weight: 700;
+    }
+
+    /* Floating Center Button */
+    .bottom-nav-cta {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+        text-decoration: none;
         -webkit-tap-highlight-color: transparent;
         position: relative;
-        padding-top: 0.1rem;
     }
+
     .bottom-nav-cta-btn {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 3rem;
-        height: 3rem;
+        width: 3.25rem;
+        height: 3.25rem;
         border-radius: 9999px;
-        background: #1D1D1F;
+        background: linear-gradient(135deg, #A78BFA, #8B5CF6); /* Purple Gradient */
         color: white;
-        font-size: 1.4rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
-        margin-top: -0.75rem; 
+        font-size: 1.5rem;
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Elevate above navbar */
+        transform: translateY(-0.75rem); 
     }
+
     .bottom-nav-cta:active .bottom-nav-cta-btn {
-        background: #007AFF;
-        transform: scale(0.9);
-        box-shadow: 0 2px 6px rgba(0, 122, 255, 0.35);
+        transform: translateY(-0.75rem) scale(0.9);
+        box-shadow: 0 2px 8px rgba(139, 92, 246, 0.6);
     }
-    .bottom-nav-cta .bottom-nav-label {
-        margin-top: 0.1rem;
-    }
+    
     @media (max-width: 767px) {
         body {
-            padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+            /* Adjust bottom padding to account for floating nav + spacing */
+            padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
         }
     }
 </style>

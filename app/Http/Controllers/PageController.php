@@ -22,6 +22,10 @@ class PageController extends Controller
             $hasDiscount = $p->discount_price && $p->discount_price > 0 && $p->discount_price < $p->price;
             $currentPrice = $hasDiscount ? $p->discount_price : $p->price;
             $oldPrice = $hasDiscount ? $p->price : null;
+            $imageUrl = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22400%22 height=%22300%22/%3E%3C/svg%3E';
+            if ($p->image) {
+                $imageUrl = \Illuminate\Support\Str::startsWith($p->image, ['http://', 'https://']) ? $p->image : \Illuminate\Support\Facades\Storage::url($p->image);
+            }
             
             return [
                 'name' => $p->name,
@@ -31,17 +35,21 @@ class PageController extends Controller
                 'oldPrice' => $oldPrice,
                 'rating' => 4.9,
                 'sold' => '0',
-                'image' => $p->image ?? 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22400%22 height=%22300%22/%3E%3C/svg%3E',
+                'image' => $imageUrl,
                 'id' => $p->id,
                 'slug' => $p->slug ?? null,
             ];
         })->toArray();
 
         $testimonials_js = $testimonials->map(function ($t) {
+            $imageUrl = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect fill=%22%23e0e0e0%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E';
+            if ($t->image) {
+                $imageUrl = \Illuminate\Support\Str::startsWith($t->image, ['http://', 'https://']) ? $t->image : \Illuminate\Support\Facades\Storage::url($t->image);
+            }
             return [
                 'name' => $t->name,
                 'text' => $t->testimonial,
-                'image' => $t->image ?? 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect fill=%22%23e0e0e0%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E',
+                'image' => $imageUrl,
             ];
         })->toArray();
 
@@ -65,6 +73,10 @@ class PageController extends Controller
             $hasDiscount = $p->discount_price && $p->discount_price > 0 && $p->discount_price < $p->price;
             $currentPrice = $hasDiscount ? $p->discount_price : $p->price;
             $oldPrice = $hasDiscount ? $p->price : null;
+            $imageUrl = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22400%22 height=%22300%22/%3E%3C/svg%3E';
+            if ($p->image) {
+                $imageUrl = \Illuminate\Support\Str::startsWith($p->image, ['http://', 'https://']) ? $p->image : \Illuminate\Support\Facades\Storage::url($p->image);
+            }
             
             return [
                 'id' => $p->id,
@@ -73,7 +85,7 @@ class PageController extends Controller
                 'category' => $p->category?->name ?? 'Produk',
                 'price' => $currentPrice,
                 'old_price' => $oldPrice,
-                'image' => $p->image ?? 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22400%22 height=%22300%22/%3E%3C/svg%3E',
+                'image' => $imageUrl,
                 'is_popular' => $p->is_popular ?? false,
                 'rating' => 4.9,
             ];
@@ -118,13 +130,17 @@ class PageController extends Controller
                 $hasDiscount = $p->discount_price && $p->discount_price > 0 && $p->discount_price < $p->price;
                 $currentPrice = $hasDiscount ? $p->discount_price : $p->price;
                 $oldPrice = $hasDiscount ? $p->price : null;
+                $imageUrl = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 300 300%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22300%22 height=%22300%22/%3E%3C/svg%3E';
+                if ($p->image) {
+                    $imageUrl = \Illuminate\Support\Str::startsWith($p->image, ['http://', 'https://']) ? $p->image : \Illuminate\Support\Facades\Storage::url($p->image);
+                }
                 
                 return [
                     'id' => $p->id,
                     'name' => $p->name,
                     'price' => $currentPrice,
                     'oldPrice' => $oldPrice,
-                    'image' => $p->image ?? 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 300 300%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22300%22 height=%22300%22/%3E%3C/svg%3E',
+                    'image' => $imageUrl,
                 ];
             })
             ->toArray();
@@ -132,13 +148,18 @@ class PageController extends Controller
         $currentPrice = $hasDiscount ? $product->discount_price : ($product?->price ?? 0);
         $oldPrice = $hasDiscount ? $product->price : null;
 
+        $mainImageUrl = null;
+        if ($product && $product->image) {
+            $mainImageUrl = \Illuminate\Support\Str::startsWith($product->image, ['http://', 'https://']) ? $product->image : \Illuminate\Support\Facades\Storage::url($product->image);
+        }
+
         $productData = $product ? [
             'id' => $product->id,
             'title' => $product->name,
             'price' => $currentPrice,
             'oldPrice' => $oldPrice,
             'description' => $product->description,
-            'image' => $product->image,
+            'image' => $mainImageUrl,
             'rating' => 4.9,
             'sold' => 1200,
         ] : null;

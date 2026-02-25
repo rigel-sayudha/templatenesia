@@ -51,8 +51,43 @@ class CheckoutController extends Controller
             : $normalPrice;
         
         $total = $sellingPrice * $qty;
+
+        $voucherCode = $request->input('voucherCode');
+        $appliedVoucher = null;
+        if (!empty($voucherCode)) {
+            $voucher = \App\Models\Voucher::where('code', $voucherCode)->where('is_active', true)->first();
+            if ($voucher && (!$voucher->start_date || $voucher->start_date <= now()) && (!$voucher->end_date || $voucher->end_date >= now()) && (!$voucher->usage_limit || $voucher->usage_count < $voucher->usage_limit)) {
+                $appliedVoucher = $voucher;
+                if ($voucher->type === 'nominal') {
+                    $total -= $voucher->value;
+                } else if ($voucher->type === 'percentage') {
+                    $total -= $total * ($voucher->value / 100);
+                }
+                if ($total < 0) $total = 0;
+            }
+        }
+        
         \Log::info('Checkout Calc', ['product' => $productId, 'qty' => $qty, 'discount' => $discountPrice, 'normal' => $normalPrice, 'selling' => $sellingPrice, 'total' => $total, 'request_body' => $request->all()]);
         $invoice = 'INV-' . strtoupper(Str::random(8));
+
+        $metaData = [
+            'method' => $paymentMethod,
+        ];
+
+        if ($paymentMethod === 'manual' && $bankCode) {
+            $bank = PaymentMethod::where('bank_code', $bankCode)
+                ->where('type', 'manual')
+                ->where('is_active', true)
+                ->first();
+
+            if (! $bank) {
+                return response()->json(['ok' => false, 'message' => 'Bank not found (Invalid Code)'], 404);
+            }
+
+            $metaData['bank_name'] = $bank->name;
+            $metaData['account_number'] = $bank->account_number;
+            $metaData['account_name'] = $bank->account_name;
+        }
 
         $order = Order::create([
             'invoice_id' => $invoice,
@@ -63,7 +98,12 @@ class CheckoutController extends Controller
             'customer_name' => $name,
             'customer_phone' => $phone,
             'customer_email' => $email,
+            'meta' => $metaData,
         ]);
+
+        if ($appliedVoucher) {
+            $appliedVoucher->increment('usage_count');
+        }
 
         if ($phone) {
             try {
@@ -78,14 +118,8 @@ class CheckoutController extends Controller
         session(['invoice_id' => $invoice]);
 
         if ($paymentMethod === 'manual' && $bankCode) {
-            $bank = PaymentMethod::where('bank_code', $bankCode)
-                ->where('type', 'manual')
-                ->where('is_active', true)
-                ->first();
-
-            if (! $bank) {
-                return response()->json(['ok' => false, 'message' => 'Bank not found'], 404);
-            }
+            // Evaluasi bank sudah dilakukan di awal pembuatan meta order
+            $bank = PaymentMethod::where('bank_code', $bankCode)->first();
 
             return response()->json([
                 'ok' => true,
@@ -100,6 +134,10 @@ class CheckoutController extends Controller
         } else if ($paymentMethod === 'midtrans') {
             try {
                 $tx = $midtrans->createTransaction($order);
+                if (is_array($tx) && isset($tx['redirect_url'])) {
+                    $metaData['snap_url'] = $tx['redirect_url'];
+                    $order->update(['meta' => $metaData]);
+                }
             } catch (\Throwable $e) {
                 \Log::error('MIDTRANS FAIL', ['msg' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
                 $tx = null;
@@ -116,6 +154,39 @@ class CheckoutController extends Controller
         } else {
             return response()->json(['ok' => false, 'message' => 'Invalid payment method'], 422);
         }
+    }
+
+    public function applyVoucher(Request $request)
+    {
+        $request->validate(['code' => 'required|string']);
+        
+        $voucher = \App\Models\Voucher::where('code', $request->code)->where('is_active', true)->first();
+        if (!$voucher) {
+            return response()->json(['ok' => false, 'message' => 'Voucher tidak valid atau sudah ditarik.']);
+        }
+        
+        $now = now();
+        if ($voucher->start_date && $voucher->start_date > $now) {
+            return response()->json(['ok' => false, 'message' => 'Voucher belum masuk masa aktif.']);
+        }
+        if ($voucher->end_date && $voucher->end_date < $now) {
+            return response()->json(['ok' => false, 'message' => 'Voucher sudah kedaluwarsa.']);
+        }
+        if ($voucher->usage_limit && $voucher->usage_count >= $voucher->usage_limit) {
+            return response()->json(['ok' => false, 'message' => 'Batas kuota penggunaan voucher telah habis.']);
+        }
+        
+        return response()->json([
+            'ok' => true,
+            'voucher' => [
+                'id' => $voucher->id,
+                'code' => $voucher->code,
+                'type' => $voucher->type,
+                'value' => $voucher->value,
+                'description' => $voucher->description
+            ],
+            'message' => 'Kupon berhasil diterapkan!'
+        ]);
     }
 
     public function webhook(Request $request, WhatsAppService $wa)

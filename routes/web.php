@@ -33,6 +33,7 @@ Route::get('/checkout', [PageController::class, 'checkout'])->name('checkout');
 
 
 Route::post('/checkout', [\App\Http\Controllers\CheckoutController::class, 'checkout'])->name('checkout');
+Route::post('/checkout/apply-voucher', [\App\Http\Controllers\CheckoutController::class, 'applyVoucher'])->name('checkout.applyVoucher');
 Route::post('/checkout/process', [\App\Http\Controllers\CheckoutController::class, 'checkout'])->name('checkout.process');
 Route::post('/webhook/payment', [\App\Http\Controllers\CheckoutController::class, 'webhook'])->name('webhook.payment');
 
@@ -70,13 +71,12 @@ Route::get('/dev/create-order/{id}', function ($id) {
 
 Route::get('/debug-checkout', function() {
     $request = \Illuminate\Http\Request::create('/checkout', 'POST', [
-        'product_id' => 1,
+        'product_id' => 7,
         'quantity' => 1,
-        'name' => 'Test',
-        'email' => 'test@example.com',
-        'phone' => '123456',
-        'paymentMethod' => 'manual',
-        'bankCode' => \App\Models\PaymentMethod::where('type', 'manual')->first()->bank_code ?? 'bca'
+        'name' => 'Rigel Sayudha',
+        'email' => 'rigeldonovan@gmail.com',
+        'phone' => '08122334455',
+        'paymentMethod' => 'midtrans',
     ]);
     
     $controller = app(\App\Http\Controllers\CheckoutController::class);

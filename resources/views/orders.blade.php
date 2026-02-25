@@ -73,31 +73,37 @@
         @else
             <div class="space-y-6">
                 @foreach($orders as $order)
-                    <div @click="openDetail({
-                            id: {{ $order->id }},
-                            invoice_id: '{{ $order->invoice_id }}',
-                            status: '{{ $order->status }}',
-                            product_name: '{{ addslashes($order->product->name ?? 'Produk Digital Templatenesia') }}',
-                            amount: {{ $order->amount ?? 0 }},
-                            admin_fee: {{ $order->admin_fee ?? 0 }},
-                            total: {{ $order->total }},
-                            customer_name: '{{ addslashes($order->customer_name) }}',
-                            customer_email: '{{ addslashes($order->customer_email) }}',
-                            customer_phone: '{{ addslashes($order->customer_phone) }}',
-                            payment_method: '{{ $order->payment_method ?? '' }}'
-                        })"
+                    @php
+                        $orderPayload = [
+                            "id" => $order->id,
+                            "invoice_id" => $order->invoice_id,
+                            "status" => $order->status,
+                            "product_name" => $order->product->name ?? "Produk Digital",
+                            "amount" => $order->amount ?? 0,
+                            "admin_fee" => $order->admin_fee ?? 0,
+                            "total" => $order->total,
+                            "customer_name" => $order->customer_name,
+                            "customer_email" => $order->customer_email,
+                            "customer_phone" => $order->customer_phone,
+                            "payment_method" => $order->payment_method ?? "",
+                            "meta" => $order->meta ?? []
+                        ];
+                    @endphp
+                    <div @click="openDetail({{ json_encode($orderPayload) }})"
                         class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 flex flex-col md:flex-row items-center justify-between gap-6 transition-all hover:shadow-md hover:border-blue-100 group cursor-pointer">
                         
                         <div class="flex-1 w-full relative">
                             <!-- Overlay click area khusus tulisan agar jika tombol CTA di klik tidak terjadi propagasi / bentrok -->
                             <div class="flex items-center justify-between mb-3 pointer-events-none">
                                 <span class="text-sm font-semibold text-slate-500 bg-slate-100 px-3 py-1 rounded-md">INV: {{ $order->invoice_id }}</span>
-                                @if($order->status === 'paid')
-                                    <span class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full flex items-center"><i class="ri-check-line mr-1 text-sm"></i> Lunas</span>
+                                @if($order->status === 'paid' || $order->status === 'success')
+                                    <span class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full flex items-center shadow-sm"><i class="ri-check-line mr-1.5 text-sm"></i> Lunas</span>
                                 @elseif($order->status === 'pending')
-                                    <span class="bg-amber-100 text-amber-700 text-xs font-bold px-3 py-1 rounded-full flex items-center"><i class="ri-time-line mr-1 text-sm"></i> Menunggu Pembayaran</span>
+                                    <span class="bg-yellow-100 text-yellow-700 text-xs font-bold px-3 py-1 rounded-full flex items-center shadow-sm"><i class="ri-time-line mr-1.5 text-sm"></i> Pending</span>
+                                @elseif($order->status === 'cancelled')
+                                    <span class="bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1 rounded-full flex items-center shadow-sm"><i class="ri-file-forbid-line mr-1.5 text-sm"></i> Dibatalkan</span>
                                 @else
-                                    <span class="bg-red-100 text-red-700 text-xs font-bold px-3 py-1 rounded-full flex items-center"><i class="ri-close-line mr-1 text-sm"></i> {{ ucfirst($order->status) }}</span>
+                                    <span class="bg-red-100 text-red-700 text-xs font-bold px-3 py-1 rounded-full flex items-center shadow-sm"><i class="ri-close-circle-line mr-1.5 text-sm"></i> Gagal</span>
                                 @endif
                             </div>
                             
@@ -168,14 +174,17 @@
                             <span class="text-sm text-slate-500 mb-1">Invoice</span>
                             <span class="font-bold text-iosBlue text-lg tracking-wider mb-3" x-text="selectedOrder.invoice_id"></span>
                             
-                            <template x-if="selectedOrder.status === 'paid'">
-                                <span class="bg-green-100 text-green-700 font-bold px-4 py-1.5 rounded-full flex items-center"><i class="ri-check-double-line mr-1.5"></i> Pembayaran Berhasil</span>
+                            <template x-if="selectedOrder.status === 'paid' || selectedOrder.status === 'success'">
+                                <span class="bg-green-100 text-green-700 font-bold px-4 py-1.5 rounded-full flex items-center shadow-sm"><i class="ri-check-double-line mr-1.5"></i> Pembayaran Berhasil</span>
                             </template>
                             <template x-if="selectedOrder.status === 'pending'">
-                                <span class="bg-amber-100 text-amber-700 font-bold px-4 py-1.5 rounded-full flex items-center"><i class="ri-time-line mr-1.5"></i> Menunggu Pembayaran</span>
+                                <span class="bg-yellow-100 text-yellow-700 font-bold px-4 py-1.5 rounded-full flex items-center shadow-sm"><i class="ri-time-line mr-1.5"></i> Pending</span>
                             </template>
-                            <template x-if="selectedOrder.status !== 'paid' && selectedOrder.status !== 'pending'">
-                                <span class="bg-red-100 text-red-700 font-bold px-4 py-1.5 rounded-full flex items-center"><i class="ri-close-circle-line mr-1.5"></i> <span x-text="selectedOrder.status"></span></span>
+                            <template x-if="selectedOrder.status === 'cancelled'">
+                                <span class="bg-slate-100 text-slate-700 font-bold px-4 py-1.5 rounded-full flex items-center shadow-sm"><i class="ri-file-forbid-line mr-1.5"></i> Transaksi Dibatalkan</span>
+                            </template>
+                            <template x-if="selectedOrder.status !== 'paid' && selectedOrder.status !== 'success' && selectedOrder.status !== 'pending' && selectedOrder.status !== 'cancelled'">
+                                <span class="bg-red-100 text-red-700 font-bold px-4 py-1.5 rounded-full flex items-center shadow-sm"><i class="ri-close-circle-line mr-1.5"></i> <span x-text="selectedOrder.status === 'failed' ? 'Pembayaran Gagal' : selectedOrder.status"></span></span>
                             </template>
                         </div>
 
@@ -219,6 +228,61 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Instruksi Pembayaran Khusus Pending -->
+                        <template x-if="selectedOrder.status === 'pending' && selectedOrder.meta && selectedOrder.meta.method">
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Instruksi Pembayaran</h4>
+                                
+                                <!-- Jika Manual Bank -->
+                                <template x-if="selectedOrder.meta.method === 'manual'">
+                                    <div class="bg-blue-50/50 border border-blue-100 p-4 rounded-xl space-y-3">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <div class="w-10 h-10 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-iosBlue">
+                                                <i class="ri-bank-card-line text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <div class="text-sm text-slate-500">Bank Tujuan</div>
+                                                <div class="font-bold text-slate-900" x-text="selectedOrder.meta.bank_name || 'Bank Transfer'"></div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-white rounded-lg p-3 border border-slate-100 flex justify-between items-center group">
+                                            <div>
+                                                <div class="text-xs text-slate-500 mb-0.5">Nomor Rekening</div>
+                                                <div class="font-bold text-slate-900 tracking-wider text-lg" x-text="selectedOrder.meta.account_number || '-'"></div>
+                                            </div>
+                                        </div>
+                                        <div class="text-sm text-slate-600">
+                                            A.n <span class="font-bold text-slate-800" x-text="selectedOrder.meta.account_name || '-'"></span>
+                                        </div>
+                                        <div class="pt-3 border-t border-blue-100/50 mt-2 text-xs text-slate-500 flex gap-2 items-start">
+                                            <i class="ri-information-line text-iosBlue text-sm"></i>
+                                            <span>Harap transfer tepat sesuai total tagihan hingga 3 digit terakhir (jika ada) untuk mempercepat verifikasi otomatis.</span>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <!-- Jika Midtrans -->
+                                <template x-if="selectedOrder.meta.method === 'midtrans'">
+                                    <div class="bg-purple-50/50 border border-purple-100 p-5 rounded-xl text-center">
+                                        <div class="w-12 h-12 bg-white rounded-full mx-auto mb-3 flex items-center justify-center text-iosPurple shadow-sm border border-slate-100">
+                                            <i class="ri-secure-payment-line text-2xl"></i>
+                                        </div>
+                                        <h4 class="font-bold text-slate-900 mb-2">Pembayaran via Midtrans</h4>
+                                        <p class="text-sm text-slate-600 mb-4">Selesaikan pembayaran Anda secara instan menggunakan layanan GoPay, BCA Virtual Account, Kartu Kredit, atau metode lainnya yang tersedia.</p>
+                                        
+                                        <template x-if="selectedOrder.meta.snap_url">
+                                            <a :href="selectedOrder.meta.snap_url" class="inline-flex w-full justify-center items-center gap-2 bg-gradient-to-r from-iosPurple to-purple-500 hover:from-purple-600 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-md active:scale-95">
+                                                Lanjutkan ke Midtrans Snap <i class="ri-arrow-right-line"></i>
+                                            </a>
+                                        </template>
+                                        <template x-if="!selectedOrder.meta.snap_url">
+                                            <p class="text-xs text-red-500 font-medium bg-red-50 p-2 rounded">Tautan pembayaran tidak sedia. Harap hubungi Admin.</p>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
 
                         <!-- Data Pembeli -->
                         <div class="bg-slate-50 p-4 rounded-xl text-sm space-y-2">
