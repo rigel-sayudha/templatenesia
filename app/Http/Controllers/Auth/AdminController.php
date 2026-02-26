@@ -7,19 +7,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
-class LoginController extends Controller
+class AdminController extends Controller
 {
-    /**
-     * Show the login form
-     */
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    /**
-     * Handle login request
-     */
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -37,9 +31,6 @@ class LoginController extends Controller
         ]);
     }
 
-    /**
-     * Handle logout
-     */
     public function logout(Request $request)
     {
         Auth::logout();

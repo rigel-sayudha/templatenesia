@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@php
+    $isAdmin = auth()->check() && in_array(auth()->user()->email, ['admin@templatenesia.com','rigeldonovan@gmail.com']);
+@endphp
+
 @section('title', 'Pesanan Saya - Templatenesia Official')
 
 @section('content')
@@ -30,6 +34,42 @@
                 <i class="fa-regular fa-heart mr-2"></i>Wishlist
                 <span x-cloak x-show="$store.wishlist.count > 0" x-text="$store.wishlist.count" class="absolute -top-1 -right-4 bg-red-500 text-white min-w-[16px] h-4 rounded-full flex items-center justify-center text-[10px] font-bold px-1"></span>
             </a>
+            
+            <div class="h-4 w-px bg-slate-200 mx-2"></div>
+
+            @guest
+                <div x-data class="flex items-center bg-slate-100/80 backdrop-blur-sm rounded-full p-1 border border-slate-200">
+                    <button @click.prevent="$dispatch('open-auth-modal', { tab: 'login' })" class="px-4 py-1.5 text-sm font-semibold text-slate-600 hover:text-iosBlue transition-colors rounded-full hover:bg-white hover:shadow-sm">Masuk</button>
+                    <button @click.prevent="$dispatch('open-auth-modal', { tab: 'register' })" class="px-4 py-1.5 text-sm font-semibold bg-white text-iosBlue shadow-sm rounded-full transition-transform active:scale-95">Daftar</button>
+                </div>
+            @else
+                <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open" @click.away="open = false" class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 border border-slate-200 px-3 py-1.5 rounded-full transition-colors">
+                        <div class="w-6 h-6 rounded-full bg-gradient-to-r from-iosBlue to-iosPurple flex items-center justify-center text-white text-xs font-bold uppercase">
+                            {{ substr(auth()->user()->name, 0, 1) }}
+                        </div>
+                        <span class="text-sm font-semibold text-slate-700 max-w-[80px] break-keep truncate">{{ explode(' ', auth()->user()->name)[0] }}</span>
+                        <i class="ri-arrow-down-s-line text-slate-500"></i>
+                    </button>
+                    <div x-show="open" x-transition x-cloak class="absolute top-full right-0 mt-3 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-[100] py-2">
+                        <div class="px-4 py-2 border-b border-slate-50 mb-2">
+                            <p class="text-xs text-slate-500">Telah Masuk:</p>
+                            <p class="text-sm font-bold text-slate-900 truncate" title="{{ auth()->user()->email }}">{{ auth()->user()->email }}</p>
+                        </div>
+                        @if(auth()->user()->email === 'admin@templatenesia.com' || auth()->user()->email === 'rigeldonovan@gmail.com')
+                        <a href="/admin" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-purple-50 hover:text-iosPurple transition-colors">
+                            <i class="ri-dashboard-3-line"></i> Admin Panel
+                        </a>
+                        @endif
+                        <a href="/orders" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-iosBlue transition-colors">
+                            <i class="ri-shopping-bag-3-line"></i> Pesanan Saya
+                        </a>
+                        <button onclick="fetch('/ajax/logout', {method:'POST', headers:{'X-CSRF-TOKEN':'{{ csrf_token() }}'}}).then(()=>window.location.reload())" class="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-left mt-1 border-t border-slate-50 pt-3">
+                            <i class="ri-logout-box-r-line"></i> Keluar
+                        </button>
+                    </div>
+                </div>
+            @endguest
         </nav>
 
         <a href="https://wa.me/6287751299911" target="_blank" class="flex items-center gap-2 bg-slate-900 hover:bg-iosBlue text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95 absolute right-4 sm:right-6">
@@ -39,25 +79,42 @@
     </div>
 </header>
 
-<div x-data="{ 
-    showDetail: false, 
-    selectedOrder: null,
-    openDetail(order) {
-        this.selectedOrder = order;
-        this.showDetail = true;
-        document.body.style.overflow = 'hidden';
-    },
-    closeDetail() {
-        this.showDetail = false;
-        setTimeout(() => { this.selectedOrder = null; }, 300);
-        document.body.style.overflow = 'auto';
-    }
-}" class="min-h-screen bg-slate-50 pt-32 pb-16 relative">
+<div x-data="ordersApp()" class="min-h-screen bg-slate-50 pt-32 pb-16 relative">
     <div class="max-w-4xl mx-auto px-4 sm:px-6">
+        @auth
+        <div class="mb-10 bg-white rounded-3xl shadow-sm border border-slate-100 p-6 flex flex-col md:flex-row items-center justify-between gap-5 relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 w-40 h-40 bg-gradient-to-br from-iosBlue/5 to-iosPurple/5 rounded-full blur-2xl"></div>
+            <div class="flex items-center gap-5 relative z-10 w-full md:w-auto">
+                <div class="w-14 h-14 rounded-full bg-gradient-to-r from-iosBlue to-iosPurple flex items-center justify-center text-white text-2xl font-bold uppercase shadow-md ring-4 ring-white shrink-0">
+                    {{ substr(auth()->user()->name, 0, 1) }}
+                </div>
+                <div class="text-left flex-1 min-w-0">
+                    <h3 class="font-heading font-extrabold text-xl text-slate-900 truncate">{{ auth()->user()->name }}</h3>
+                    <p class="text-sm text-slate-500 flex items-center gap-1.5 mt-0.5 truncate"><i class="ri-mail-line"></i> {{ auth()->user()->email }}</p>
+                </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto relative z-10">
+                @if(auth()->user()->email === 'admin@templatenesia.com' || auth()->user()->email === 'rigeldonovan@gmail.com')
+                <a href="/admin" class="flex-1 md:flex-none justify-center flex items-center gap-2 bg-purple-50 text-iosPurple hover:bg-purple-100 px-5 py-2.5 rounded-xl text-sm font-bold transition-all hover:shadow-sm active:scale-95">
+                    <i class="ri-dashboard-3-line text-lg"></i> Admin Panel
+                </a>
+                @endif
+                <button onclick="fetch('/ajax/logout', {method:'POST', headers:{'X-CSRF-TOKEN':'{{ csrf_token() }}'}}).then(()=>window.location.reload())" class="flex-1 md:flex-none justify-center flex items-center gap-2 bg-red-50 text-red-600 hover:bg-red-100 px-5 py-2.5 rounded-xl text-sm font-bold transition-all hover:shadow-sm active:scale-95">
+                    <i class="ri-logout-box-r-line text-lg"></i> Keluar
+                </button>
+            </div>
+        </div>
+        
+        <div class="text-center mb-10">
+            <h2 class="font-heading text-3xl font-bold text-slate-900">Riwayat Transaksi</h2>
+            <p class="text-slate-500 mt-2">Daftar produk digital yang telah Anda pesan.</p>
+        </div>
+        @else
         <div class="text-center mb-10">
             <h2 class="font-heading text-3xl font-bold text-slate-900">Pesanan Saya</h2>
             <p class="text-slate-500 mt-2">Lacak status pesanan dan dapatkan produk digital Anda di sini.</p>
         </div>
+        @endauth
 
         @if(count($orders) === 0)
             <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 p-12 text-center">
@@ -86,6 +143,7 @@
                             "customer_email" => $order->customer_email,
                             "customer_phone" => $order->customer_phone,
                             "payment_method" => $order->paymentMethod->name ?? ($order->payment_method ?? "Transfer Bank"),
+                            "payment_proof" => $order->payment_proof ? \Illuminate\Support\Facades\Storage::url($order->payment_proof) : null,
                             "meta" => is_string($order->meta) ? json_decode($order->meta, true) : ($order->meta ?? [])
                         ];
                     @endphp
@@ -264,6 +322,27 @@
                                             <i class="ri-information-line text-iosBlue text-sm"></i>
                                             <span>Harap transfer tepat sesuai total tagihan hingga 3 digit terakhir (jika ada) untuk mempercepat verifikasi otomatis.</span>
                                         </div>
+                                        
+                                        <!-- Area Upload Bukti Jika Belum -->
+                                        <template x-if="!selectedOrder.payment_proof">
+                                            <div class="mt-4 pt-3 border-t border-blue-200">
+                                                <label class="block text-xs font-bold text-slate-700 mb-2">Unggah Bukti Transfer</label>
+                                                <input type="file" x-ref="proofInput" accept=".jpg,.jpeg,.png,.pdf" class="block w-full text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200 cursor-pointer mb-2">
+                                                <button @click="uploadProof" :disabled="uploadingProof" class="w-full bg-slate-900 hover:bg-iosBlue text-white font-bold py-2.5 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 text-xs disabled:opacity-50">
+                                                    <span x-show="!uploadingProof">Selesai & Submit Upload</span>
+                                                    <span x-show="uploadingProof"><i class="fa-solid fa-spinner animate-spin"></i> Loading...</span>
+                                                </button>
+                                            </div>
+                                        </template>
+                                        
+                                        <!-- Area Lihat Bukti Jika Sudah -->
+                                        <template x-if="selectedOrder.payment_proof">
+                                            <div class="mt-4 pt-3 border-t border-blue-200 text-center">
+                                                <div class="inline-flex items-center justify-center gap-1.5 text-xs font-bold text-green-600 bg-green-50 px-3 py-1.5 rounded-full mb-2 border border-green-200">
+                                                    <i class="ri-check-line text-sm"></i> Bukti Pembayaran Terunggah
+                                                </div>
+                                            </div>
+                                        </template>
                                     </div>
                                 </template>
 
@@ -309,6 +388,18 @@
                                 </div>
                             </template>
                         </div>
+                        
+                        @if($isAdmin)
+                        <template x-if="selectedOrder.payment_proof">
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Pengecekan Admin</h4>
+                                <a :href="selectedOrder.payment_proof" target="_blank" class="w-full bg-slate-100 text-slate-800 hover:bg-slate-200 border border-slate-200 border-dashed font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-sm relative overflow-hidden group">
+                                    <div class="absolute inset-0 w-1/4 h-full bg-white/40 skew-x-12 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
+                                    <i class="ri-image-circle-line text-lg text-iosBlue"></i> Lihat Struk / Bukti Transfer
+                                </a>
+                            </div>
+                        </template>
+                        @endif
                     </div>
                 </div>
             </template>
@@ -317,4 +408,54 @@
 </div>
 
 @include('partials.footer')
+<script>
+    function ordersApp() {
+        return {
+            showDetail: false, 
+            selectedOrder: null,
+            uploadingProof: false,
+            async uploadProof() {
+                let proofFile = this.$refs.proofInput?.files[0];
+                if (!proofFile) {
+                    alert('Harap pilih file terlebih dahulu.');
+                    return;
+                }
+                this.uploadingProof = true;
+                try {
+                    let formData = new FormData();
+                    formData.append('payment_proof', proofFile);
+                    const res = await fetch('/order/' + this.selectedOrder.invoice_id + '/upload-proof', {
+                        method: 'POST',
+                        headers: { 
+                            'Accept': 'application/json', 
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content 
+                        },
+                        body: formData
+                    });
+                    const data = await res.json();
+                    if (data.ok) {
+                        alert(data.message);
+                        window.location.reload();
+                    } else {
+                        alert(data.message || 'Gagal mengunggah bukti');
+                    }
+                } catch (e) { 
+                    alert('Terjadi kesalahan jaringan.'); 
+                } finally { 
+                    this.uploadingProof = false; 
+                }
+            },
+            openDetail(order) {
+                this.selectedOrder = order;
+                this.showDetail = true;
+                document.body.style.overflow = 'hidden';
+            },
+            closeDetail() {
+                this.showDetail = false;
+                setTimeout(() => { this.selectedOrder = null; }, 300);
+                document.body.style.overflow = 'auto';
+            }
+        }
+    }
+</script>
 @endsection

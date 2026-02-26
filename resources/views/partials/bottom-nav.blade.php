@@ -29,7 +29,6 @@
                 <span class="bottom-nav-label">Produk</span>
             </a>
 
-            <!-- Floating CTA Center -->
             <a href="https://wa.me/6287751299911" target="_blank"
                class="bottom-nav-cta"
                aria-label="Hubungi Admin via WhatsApp">
@@ -38,13 +37,21 @@
                 </div>
             </a>
 
-            <a href="/orders" class="bottom-nav-item {{ $isOrders ? 'active' : '' }}"
-               aria-label="Pesanan Saya">
-                <div class="bottom-nav-icon-wrap">
-                    <i class="ri-file-list-3-{{ $isOrders ? 'fill' : 'line' }}"></i>
-                </div>
-                <span class="bottom-nav-label">History</span>
-            </a>
+            @guest
+                <button x-data @click.prevent="$dispatch('open-auth-modal', { tab: 'login' })" class="bottom-nav-item" aria-label="Pesanan">
+                    <div class="bottom-nav-icon-wrap">
+                        <i class="ri-file-list-3-line"></i>
+                    </div>
+                    <span class="bottom-nav-label">Pesanan</span>
+                </button>
+            @else
+                <a href="/orders" class="bottom-nav-item {{ $isOrders ? 'active' : '' }}" aria-label="Pesanan">
+                    <div class="bottom-nav-icon-wrap">
+                        <i class="ri-file-list-3-{{ $isOrders ? 'fill' : 'line' }}"></i>
+                    </div>
+                    <span class="bottom-nav-label">Pesanan</span>
+                </a>
+            @endguest
 
             <a href="/wishlist" class="bottom-nav-item {{ $isWishlist ? 'active' : '' }}"
                aria-label="Wishlist" x-data>
@@ -61,7 +68,6 @@
 
 <style>
     #mobile-bottom-nav {
-        /* Extra padding for safe area logic at bottom */
         padding-bottom: env(safe-area-inset-bottom, 0px);
         filter: drop-shadow(0 10px 25px rgba(139, 92, 246, 0.15));
     }
@@ -70,7 +76,7 @@
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(255, 255, 255, 0.8);
-        border-radius: 9999px; /* Pill shape */
+        border-radius: 9999px; 
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     }
 
@@ -92,7 +98,7 @@
         flex: 1;
         min-width: 0;
         text-decoration: none;
-        color: #94a3b8; /* Slate-400 */
+        color: #94a3b8;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         -webkit-tap-highlight-color: transparent;
         padding: 0.25rem;
@@ -107,20 +113,19 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 3.5rem;   /* Wide pill for active state */
+        width: 3.5rem;   
         height: 2rem;
         border-radius: 9999px;
         font-size: 1.25rem;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* Active State mimicking the Dribbble design (Purple Accent) */
     .bottom-nav-item.active {
-        color: #8B5CF6; /* Purple-500 */
+        color: #8B5CF6; 
     }
     
     .bottom-nav-item.active .bottom-nav-icon-wrap {
-        background: rgba(139, 92, 246, 0.12); /* Light Purple pill background */
+        background: rgba(139, 92, 246, 0.12); 
         color: #8B5CF6;
     }
 
@@ -156,12 +161,11 @@
         width: 3.25rem;
         height: 3.25rem;
         border-radius: 9999px;
-        background: linear-gradient(135deg, #A78BFA, #8B5CF6); /* Purple Gradient */
+        background: linear-gradient(135deg, #A78BFA, #8B5CF6); 
         color: white;
         font-size: 1.5rem;
         box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        /* Elevate above navbar */
         transform: translateY(-0.75rem); 
     }
 
@@ -172,7 +176,6 @@
     
     @media (max-width: 767px) {
         body {
-            /* Adjust bottom padding to account for floating nav + spacing */
             padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
         }
     }

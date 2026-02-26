@@ -14,11 +14,6 @@ class NotificationController extends Controller
         $this->whatsapp = $whatsapp;
     }
 
-    /**
-     * Send test WhatsApp message
-     * POST /dev/send-wa/{phone}
-     * Body: { "message": "Test message" }
-     */
     public function sendTestWhatsApp(Request $request, $phone)
     {
         $message = $request->get('message', 'Test message from Templatenesia');

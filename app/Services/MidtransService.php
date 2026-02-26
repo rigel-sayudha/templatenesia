@@ -48,6 +48,9 @@ class MidtransService
                     'name' => $order->product->name ?? 'Product',
                 ]
             ],
+            'callbacks' => [
+                'finish' => url('/checkout/finish')
+            ]
         ];
 
         $response = Http::withBasicAuth($this->serverKey, '')->post($base . '/snap/v1/transactions', $payload);

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Orders\Schemas;
 
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
 use Illuminate\Support\HtmlString;
@@ -64,6 +65,13 @@ class OrderForm
                             ->label('Email Pelanggan')
                             ->email()
                             ->maxLength(255)
+                            ->columnSpanFull(),
+                        FileUpload::make('payment_proof')
+                            ->label('Bukti Pembayaran')
+                            ->directory('payment-proofs')
+                            ->image()
+                            ->openable()
+                            ->downloadable()
                             ->columnSpanFull(),
                     ])->columns(2),
             ])

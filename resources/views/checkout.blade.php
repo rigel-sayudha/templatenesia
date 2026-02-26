@@ -46,6 +46,42 @@
                 <i class="fa-regular fa-heart mr-2"></i>Wishlist
                 <span x-cloak x-show="$store.wishlist.count > 0" x-text="$store.wishlist.count" class="absolute -top-1 -right-4 bg-red-500 text-white min-w-[16px] h-4 rounded-full flex items-center justify-center text-[10px] font-bold px-1"></span>
             </a>
+            
+            <div class="h-4 w-px bg-slate-200 mx-2"></div>
+
+            @guest
+                <div x-data class="flex items-center bg-slate-100/80 backdrop-blur-sm rounded-full p-1 border border-slate-200">
+                    <button @click.prevent="$dispatch('open-auth-modal', { tab: 'login' })" class="px-4 py-1.5 text-sm font-semibold text-slate-600 hover:text-iosBlue transition-colors rounded-full hover:bg-white hover:shadow-sm">Masuk</button>
+                    <button @click.prevent="$dispatch('open-auth-modal', { tab: 'register' })" class="px-4 py-1.5 text-sm font-semibold bg-white text-iosBlue shadow-sm rounded-full transition-transform active:scale-95">Daftar</button>
+                </div>
+            @else
+                <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open" @click.away="open = false" class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 border border-slate-200 px-3 py-1.5 rounded-full transition-colors">
+                        <div class="w-6 h-6 rounded-full bg-gradient-to-r from-iosBlue to-iosPurple flex items-center justify-center text-white text-xs font-bold uppercase">
+                            {{ substr(auth()->user()->name, 0, 1) }}
+                        </div>
+                        <span class="text-sm font-semibold text-slate-700 max-w-[80px] break-keep truncate">{{ explode(' ', auth()->user()->name)[0] }}</span>
+                        <i class="ri-arrow-down-s-line text-slate-500"></i>
+                    </button>
+                    <div x-show="open" x-transition x-cloak class="absolute top-full right-0 mt-3 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-[100] py-2">
+                        <div class="px-4 py-2 border-b border-slate-50 mb-2">
+                            <p class="text-xs text-slate-500">Telah Masuk:</p>
+                            <p class="text-sm font-bold text-slate-900 truncate" title="{{ auth()->user()->email }}">{{ auth()->user()->email }}</p>
+                        </div>
+                        @if(auth()->user()->email === 'admin@templatenesia.com' || auth()->user()->email === 'rigeldonovan@gmail.com')
+                        <a href="/admin" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-purple-50 hover:text-iosPurple transition-colors">
+                            <i class="ri-dashboard-3-line"></i> Admin Panel
+                        </a>
+                        @endif
+                        <a href="/orders" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-iosBlue transition-colors">
+                            <i class="ri-shopping-bag-3-line"></i> Pesanan Saya
+                        </a>
+                        <button onclick="fetch('/ajax/logout', {method:'POST', headers:{'X-CSRF-TOKEN':'{{ csrf_token() }}'}}).then(()=>window.location.reload())" class="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-left mt-1 border-t border-slate-50 pt-3">
+                            <i class="ri-logout-box-r-line"></i> Keluar
+                        </button>
+                    </div>
+                </div>
+            @endguest
         </nav>
 
         <a href="https://wa.me/6287751299911" target="_blank" class="flex items-center gap-2 bg-slate-900 hover:bg-iosBlue text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95 absolute right-4 sm:right-6">
@@ -154,6 +190,44 @@
                                 <i class="ri-whatsapp-line"></i>Hubungi Admin
                             </a>
                         </div>
+                        
+                        <!-- Upload Bukti Pembayaran Section -->
+                        <template x-if="form.paymentMethod === 'manual'">
+                            <div class="bg-slate-50 rounded-lg p-4 border border-slate-200 mt-4 relative">
+                                <h4 class="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wider">Unggah Bukti Transfer</h4>
+                                <div x-show="!paymentData.proofUploaded" class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                                    <p class="text-xs text-slate-500 mb-3">Pesanan Anda belum diproses. Harap unggah struk transfer agar admin dapat memvalidasinya.</p>
+                                    <input 
+                                        type="file" 
+                                        x-ref="postPaymentProof"
+                                        accept=".jpg,.jpeg,.png,.pdf"
+                                        class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100 cursor-pointer outline-none mb-3"
+                                    >
+                                    <button 
+                                        type="button"
+                                        @click="uploadPostProof"
+                                        :disabled="uploadingProof"
+                                        class="w-full bg-slate-900 hover:bg-iosBlue text-white font-bold py-2.5 rounded-xl transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-2 text-sm disabled:opacity-50"
+                                    >
+                                        <i class="ri-upload-cloud-2-line"></i>
+                                        <span x-show="!uploadingProof">Submit Bukti Pembayaran</span>
+                                        <span x-show="uploadingProof"><i class="fa-solid fa-spinner animate-spin"></i> Mengunggah...</span>
+                                    </button>
+                                    <div class="text-center mt-3">
+                                        <button type="button" @click="resetForm(); window.location.href='/orders'" class="text-xs text-iosBlue hover:underline font-medium">Unggah Nanti di Menu Pesanan</button>
+                                    </div>
+                                </div>
+                                <div x-show="paymentData.proofUploaded" x-transition class="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 shrink-0">
+                                        <i class="ri-check-line text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-green-800 text-sm">Bukti Berhasil Diunggah!</p>
+                                        <p class="text-xs text-green-700 mt-0.5">Admin kami akan segera memverifikasi pembayaran Anda.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
                     </div>
                 </div>
             </div> 
@@ -242,7 +316,7 @@
                             >
                             <span>
                                 Saya setuju dengan 
-                                <a href="#" class="text-iosBlue hover:underline font-medium">syarat dan ketentuan</a>
+                                <a href="#" @click.prevent="showTNC = true; document.body.style.overflow = 'hidden';" class="text-iosBlue hover:underline font-medium">syarat dan ketentuan</a>
                                 yang berlaku
                             </span>
                         </label>
@@ -251,8 +325,6 @@
                 </div>
 
                 <div class="space-y-6">
-                    
-                    <!-- Buyer Information -->
                     <div class="bg-white rounded-lg p-6">
                         <h3 class="text-lg font-bold mb-5 underline-accent">Informasi Pembeli</h3>
                         
@@ -360,15 +432,14 @@
                                             </label>
                                         @endforeach
                                     </div>
-                                    
-                                    <!-- Transfer manual instructions -->
-                                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-xs text-gray-600 h-fit">
+                                                                        <!-- Transfer manual instructions -->
+                                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-xs text-gray-600 h-fit md:col-span-2">
                                         <h5 class="font-semibold text-gray-900 mb-2 text-sm">Langkah-langkah:</h5>
                                         <ol class="list-decimal list-inside space-y-1.5 text-xs text-gray-700">
-                                            <li>Transfer sesuai nominal ke rekening bank.</li>
-                                            <li>Simpan screenshot / foto bukti transfer.</li>
-                                            <li>Kirim bukti pembayaran ke WhatsApp admin.</li>
-                                            <li>Tunggu konfirmasi admin 1x24 jam.</li>
+                                            <li>Selesaikan pesanan (Checkout) terlebih dahulu.</li>
+                                            <li>Transfer sesuai nominal ke rekening bank yang tertera di layar selanjutnya.</li>
+                                            <li>Simpan screenshot / foto bukti transfer Anda.</li>
+                                            <li>Unggah bukti pembayaran pada jendela Tagihan/Pesanan Saya.</li>
                                         </ol>
                                     </div>
                                 </div>
@@ -470,6 +541,9 @@
 <script>
     function checkoutApp() {
         return {
+            init() {
+                console.log("Alpine checkoutApp initialized successfully!");
+            },
             loading: false,
             paymentSuccess: false,
             paymentData: {},
@@ -496,6 +570,7 @@
                 document.body.style.overflow = 'auto';
             },
             agreeAndSubmit() {
+                this.form.agreeTerms = true;
                 this.closeTnc();
                 this.processCheckout();
             },
@@ -581,33 +656,38 @@
                 this.loading = true;
                 
                 try {
+                    let formData = new FormData();
+                    formData.append('product_id', this.product.id);
+                    formData.append('quantity', 1);
+                    formData.append('name', this.form.name);
+                    formData.append('email', this.form.email);
+                    formData.append('phone', this.form.phone);
+                    formData.append('paymentMethod', this.form.paymentMethod);
+                    
+                    if (this.form.paymentMethod === 'manual') {
+                        formData.append('bankCode', this.form.bankCode);
+
+                    }
+                    
+                    if (this.appliedVoucher) {
+                        formData.append('voucherCode', this.appliedVoucher.code);
+                    }
+
                     const response = await fetch('/checkout', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
                             'Accept': 'application/json',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         },
-                        body: JSON.stringify({
-                            product_id: this.product.id,
-                            quantity: 1,
-                            name: this.form.name,
-                            email: this.form.email,
-                            phone: this.form.phone,
-                            paymentMethod: this.form.paymentMethod,
-                            bankCode: this.form.bankCode,
-                            voucherCode: this.appliedVoucher ? this.appliedVoucher.code : null,
-                        })
+                        body: formData
                     });
 
                     const data = await response.json();
                     
                     if (data.ok) {
                         if (data.paymentUrl) {
-                            // Bypass Invoice Modal and redirect straight to Midtrans Snap
                             window.location.href = data.paymentUrl;
                         } else {
-                            // Show Invoice Modal for manual payments, with redirection on closing
                             Object.assign(this.paymentData, data);
                             this.paymentSuccess = true;
 
@@ -636,6 +716,47 @@
                     agreeTerms: false,
                     voucherCode: ''
                 };
+            },
+            uploadingProof: false,
+            async uploadPostProof() {
+                let proofFile = this.$refs.postPaymentProof?.files[0];
+                if (!proofFile) {
+                    alert('Silakan pilih file bukti transfer terlebih dahulu.');
+                    return;
+                }
+                
+                if (proofFile.size > 3 * 1024 * 1024) {
+                    alert('Ukuran file maksimal 3MB');
+                    return;
+                }
+
+                this.uploadingProof = true;
+                
+                try {
+                    let formData = new FormData();
+                    formData.append('payment_proof', proofFile);
+
+                    const response = await fetch('/order/' + this.paymentData.invoice + '/upload-proof', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        },
+                        body: formData
+                    });
+
+                    const data = await response.json();
+                    
+                    if (data.ok) {
+                        this.paymentData.proofUploaded = true;
+                    } else {
+                        alert(data.message || 'Gagal mengunggah bukti');
+                    }
+                } catch (error) {
+                    alert('Terjadi kesalahan jaringan.');
+                } finally {
+                    this.uploadingProof = false;
+                }
             }
         }
     }

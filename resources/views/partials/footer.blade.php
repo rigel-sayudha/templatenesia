@@ -15,10 +15,9 @@
             <div>
                 <h3 class="font-bold mb-4">Kategori Produk</h3>
                 <ul class="space-y-2 text-sm text-white/60">
-                    <li><a href="#" class="hover:text-iosBlue transition-colors">Streaming & Resolusi</a></li>
-                    <li><a href="#" class="hover:text-iosBlue transition-colors">Brand & Marketing</a></li>
-                    <li><a href="#" class="hover:text-iosBlue transition-colors">AI Tools</a></li>
-                    <li><a href="#" class="hover:text-iosBlue transition-colors">Aset Digital</a></li>
+                    @foreach(\App\Models\Category::where('is_active', true)->take(4)->get() as $category)
+                        <li><a href="/products?category={{ $category->slug }}" class="hover:text-iosBlue transition-colors">{{ $category->name }}</a></li>
+                    @endforeach
                 </ul>
             </div>
 
@@ -26,9 +25,8 @@
                 <h3 class="font-bold mb-4">Dukungan</h3>
                 <ul class="space-y-2 text-sm text-white/60">
                     <li><a href="/guide" class="hover:text-iosBlue transition-colors">Panduan Pengguna</a></li>
-                    <li><a href="#" class="hover:text-iosBlue transition-colors">Syarat & Ketentuan</a></li>
-                    <li><a href="#" class="hover:text-iosBlue transition-colors">Kebijakan Privasi</a></li>
-                    <li><a href="#" class="hover:text-iosBlue transition-colors">Hubungi Kami</a></li>
+                    <li><a href="/guide" class="hover:text-iosBlue transition-colors">Syarat & Ketentuan</a></li>
+                    <li><a href="https://wa.me/6287751299911" target="_blank" class="hover:text-iosBlue transition-colors">Hubungi Kami</a></li>
                 </ul>
             </div>
 

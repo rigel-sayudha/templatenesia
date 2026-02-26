@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Orders\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -35,6 +36,9 @@ class OrdersTable
                 TextColumn::make('customer_name')
                     ->label('Nama Pelanggan')
                     ->sortable(),
+                ImageColumn::make('payment_proof')
+                    ->label('Resi')
+                    ->circular(),
             ])
             ->filters([
                 SelectFilter::make('product_id')

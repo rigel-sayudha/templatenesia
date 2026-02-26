@@ -49,15 +49,37 @@
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <script>
         document.addEventListener('alpine:init', () => {
+            const isLoggedIn = {{ auth()->check() ? 'true' : 'false' }};
+            const userId = {{ auth()->check() ? auth()->id() : 'null' }};
+            const storageKey = isLoggedIn ? 'wishlist_user_' + userId : 'wishlist_guest';
+
             Alpine.store('wishlist', {
-                items: JSON.parse(localStorage.getItem('wishlist') || '[]'),
+                items: JSON.parse(localStorage.getItem(storageKey) || '[]'),
+                isLoggedIn: isLoggedIn,
+                storageKey: storageKey,
                 
-                toggle(product) {
+                async init() {
+                    // Penarikan otentik sinkronisasi state dari server (jika user logged in)
+                    if (this.isLoggedIn) {
+                        try {
+                            const res = await fetch('/ajax/wishlist', { headers: { 'Accept': 'application/json' } });
+                            if (res.ok) {
+                                const data = await res.json();
+                                if (data.ok) {
+                                    this.items = data.items;
+                                    this.save();
+                                }
+                            }
+                        } catch (e) { console.error('Wishlist Sync Error:', e); }
+                    }
+                },
+                
+                async toggle(product) {
                     const index = this.items.findIndex(i => i.id === product.id);
+                    // UI Optimistic Update
                     if (index > -1) {
                         this.items.splice(index, 1);
                     } else {
-                        // Simpan data esensial untuk render kartu produk dengan fallback support
                         this.items.push({
                             id: product.id,
                             name: product.name || product.title || 'Produk Custom',
@@ -67,6 +89,26 @@
                         });
                     }
                     this.save();
+
+                    // Sinkronisasi server diam-diam (jika logged in)
+                    if (this.isLoggedIn) {
+                        try {
+                            const res = await fetch('/ajax/wishlist/toggle', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                    'Accept': 'application/json'
+                                },
+                                body: JSON.stringify({ product_id: product.id })
+                            });
+                            const data = await res.json();
+                            if (data.ok) {
+                                this.items = data.items; // Jaminan akurasi dari DB
+                                this.save();
+                            }
+                        } catch (e) { console.error('Wishlist Sync Error:', e); }
+                    }
                 },
                 
                 has(id) {
@@ -78,7 +120,7 @@
                 },
                 
                 save() {
-                    localStorage.setItem('wishlist', JSON.stringify(this.items));
+                    localStorage.setItem(this.storageKey, JSON.stringify(this.items));
                 }
             });
         });
@@ -142,6 +184,9 @@
 
     {{-- Mobile Bottom Navigation — di luar #page-content agar position:fixed tidak terganggu oleh CSS transform --}}
     @include('partials.bottom-nav')
+
+    {{-- Global Auth Modal Container --}}
+    @include('partials.auth-modal')
 
     {{-- Page Transition Script --}}
     <script>

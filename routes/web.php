@@ -3,7 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\AdminController;
+use App\Http\Controllers\Auth\UserController;
+use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\CheckoutController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,15 +16,26 @@ use App\Http\Controllers\Auth\LoginController;
 |
 */
 
-// Auth Routes
+// Auth Routes (Default Laravel for Admin)
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [LoginController::class, 'login']);
+    Route::get('/login', [AdminController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AdminController::class, 'login']);
 });
 
 Route::middleware('auth')->group(function () {
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
+    Route::post('/ajax/wishlist/toggle', [WishlistController::class, 'toggle'])->name('ajax.wishlist.toggle');
+    Route::get('/ajax/wishlist', [WishlistController::class, 'index'])->name('ajax.wishlist.index');
 });
+
+// Auth Routes (AJAX Popup for Frontend)
+Route::post('/ajax/login', [UserController::class, 'login'])->name('ajax.login');
+Route::post('/ajax/register', [UserController::class, 'register'])->name('ajax.register');
+Route::post('/ajax/logout', [UserController::class, 'logout'])->name('ajax.logout');
+
+// Socialite Routes (Google & Facebook)
+Route::get('/auth/{provider}/redirect', [UserController::class, 'redirectToProvider'])->name('auth.social.redirect');
+Route::get('/auth/{provider}/callback', [UserController::class, 'handleProviderCallback'])->name('auth.social.callback');
 
 Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/products', [PageController::class, 'products'])->name('products');
@@ -32,21 +46,27 @@ Route::get('/product', [PageController::class, 'product'])->name('product');
 Route::get('/checkout', [PageController::class, 'checkout'])->name('checkout');
 
 
-Route::post('/checkout', [\App\Http\Controllers\CheckoutController::class, 'checkout'])->name('checkout');
-Route::post('/checkout/apply-voucher', [\App\Http\Controllers\CheckoutController::class, 'applyVoucher'])->name('checkout.applyVoucher');
-Route::post('/checkout/process', [\App\Http\Controllers\CheckoutController::class, 'checkout'])->name('checkout.process');
-Route::post('/webhook/payment', [\App\Http\Controllers\CheckoutController::class, 'webhook'])->name('webhook.payment');
+Route::post('/checkout', [CheckoutController::class, 'checkout'])->name('checkout');
+Route::post('/checkout/apply-voucher', [CheckoutController::class, 'applyVoucher'])->name('checkout.applyVoucher');
+Route::post('/checkout/process', [CheckoutController::class, 'checkout'])->name('checkout.process');
+Route::get('/checkout/finish', [CheckoutController::class, 'midtransFinish'])->name('checkout.finish');
+Route::post('/webhook/midtrans', [CheckoutController::class, 'webhook'])->name('webhook.midtrans');
+Route::post('/order/{invoice_id}/upload-proof', [CheckoutController::class, 'uploadProof'])->name('order.upload-proof');
 
 Route::get('/wishlist', function () {
     return view('wishlist');
 })->name('wishlist');
 
 Route::get('/orders', function () {
-	$invoice = session('invoice_id');
 	$orders = [];
-	if ($invoice) {
-		$orders = \App\Models\Order::where('invoice_id', $invoice)->get();
-	}
+    if (auth()->check()) {
+        $orders = \App\Models\Order::where('user_id', auth()->id())->latest()->get();
+    } else {
+        $invoice = session('invoice_id');
+        if ($invoice) {
+            $orders = \App\Models\Order::where('invoice_id', $invoice)->latest()->get();
+        }
+    }
 	return view('orders', ['orders' => $orders]);
 })->name('orders');
 
@@ -57,7 +77,7 @@ Route::get('/dev/webhook/payment', function () {
 	if (! $order) return response()->json(['ok' => false, 'message' => 'order not found'], 404);
 	$order->status = $status;
 	$order->save();
-	return response()->json(['ok' => true, 'invoice' => $invoice, 'status' => $status]);
+	return redirect('/orders');
 });
 
 Route::get('/dev/create-order/{id}', function ($id) {

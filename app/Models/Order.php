@@ -13,7 +13,7 @@ class Order extends Model
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'invoice_id','product_id','quantity','total','status','customer_name','customer_phone','customer_email','meta'
+        'invoice_id','user_id','product_id','quantity','total','status','customer_name','customer_phone','customer_email','meta','payment_proof'
     ];
 
     protected $casts = [
@@ -29,22 +29,20 @@ class Order extends Model
         return $this->belongsTo(Product::class);
     }
 
-    /**
-     * Route notifications for Fonnte WhatsApp channel
-     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function routeNotificationForWhatsapp()
     {
         return $this->customer_phone;
     }
 
-    /**
-     * Boot model
-     */
     protected static function boot()
     {
         parent::boot();
 
-        // Fire OrderPaid event when status changes to paid
         static::updating(function ($model) {
             $originalStatus = $model->getOriginal('status');
             if ($originalStatus !== 'paid' && $model->status === 'paid') {

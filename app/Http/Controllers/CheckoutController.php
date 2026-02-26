@@ -89,8 +89,11 @@ class CheckoutController extends Controller
             $metaData['account_name'] = $bank->account_name;
         }
 
+        $path = null;
+
         $order = Order::create([
             'invoice_id' => $invoice,
+            'user_id' => auth()->check() ? auth()->id() : null,
             'product_id' => $product->id,
             'quantity' => $qty,
             'total' => $total,
@@ -99,6 +102,7 @@ class CheckoutController extends Controller
             'customer_phone' => $phone,
             'customer_email' => $email,
             'meta' => $metaData,
+            'payment_proof' => $path,
         ]);
 
         if ($appliedVoucher) {
@@ -118,7 +122,6 @@ class CheckoutController extends Controller
         session(['invoice_id' => $invoice]);
 
         if ($paymentMethod === 'manual' && $bankCode) {
-            // Evaluasi bank sudah dilakukan di awal pembuatan meta order
             $bank = PaymentMethod::where('bank_code', $bankCode)->first();
 
             return response()->json([
@@ -191,19 +194,23 @@ class CheckoutController extends Controller
 
     public function webhook(Request $request, WhatsAppService $wa)
     {
-        $invoice = $request->input('invoice_id');
-        $status = $request->input('status');
+        $invoice = $request->input('order_id', $request->input('invoice_id'));
+        $status = $request->input('transaction_status', $request->input('status'));
 
         $order = Order::where('invoice_id', $invoice)->first();
         if (! $order) {
             return response()->json(['ok' => false, 'message' => 'order not found'], 404);
         }
 
-        $order->status = $status;
+        if ($status === 'paid' || $status === 'settlement' || $status === 'capture') {
+            $order->status = 'processing';
+        } else {
+            $order->status = $status;
+        }
         $order->save();
 
         $phone = $order->customer_phone;
-        if ($status === 'paid' && $phone) {
+        if (($status === 'paid' || $status === 'settlement' || $status === 'capture') && $phone) {
             try {
                 $notification = new OrderPaidNotification($order, $phone);
                 $waMessage = $notification->toWhatsApp();
@@ -227,6 +234,64 @@ class CheckoutController extends Controller
 
         session()->flash('status', 'Pembayaran telah diterima. Terima kasih.');
         return redirect()->route('home');
+    }
+
+    public function midtransFinish(Request $request)
+    {
+        $invoice = $request->query('order_id', $request->query('invoice_id'));
+        $transactionStatus = $request->query('transaction_status', $request->query('status', ''));
+
+        if ($invoice) {
+            $order = Order::where('invoice_id', $invoice)->first();
+            if ($order && in_array($transactionStatus, ['capture', 'settlement', 'paid'])) {
+                if ($order->status === 'pending') {
+                    $order->status = 'processing';
+                    $order->save();
+                }
+            }
+        }
+
+        return redirect('/orders');
+    }
+
+    public function uploadProof(Request $request, $invoice_id)
+    {
+        $request->validate([
+            'payment_proof' => 'required|image|mimes:jpeg,png,jpg|max:3072',
+        ]);
+
+        $order = Order::where('invoice_id', $invoice_id)->first();
+        if (!$order) {
+            return response()->json(['ok' => false, 'message' => 'Pesanan tidak ditemukan'], 404);
+        }
+
+        if (auth()->check() && !in_array(auth()->user()->email, ['admin@templatenesia.com','rigeldonovan@gmail.com']) && $order->user_id && $order->user_id !== auth()->id()) {
+            return response()->json(['ok' => false, 'message' => 'Akses ditolak'], 403);
+        }
+        
+        if (!auth()->check() && $order->user_id !== null) {
+            return response()->json(['ok' => false, 'message' => 'Pesanan milik akun terdaftar (silakan Login)'], 403);
+        }
+
+        if ($request->hasFile('payment_proof')) {
+            $path = $request->file('payment_proof')->store('payment-proofs', 'public');
+            
+            $order->payment_proof = $path;
+            
+            $meta = is_string($order->meta) ? json_decode($order->meta, true) : ($order->meta ?? []);
+            $meta['payment_proof_path'] = $path;
+            $order->meta = $meta;
+            
+            $order->save();
+
+            return response()->json([
+                'ok' => true, 
+                'message' => 'Berhasil mengunggah bukti pembayaran!',
+                'proof_url' => \Illuminate\Support\Facades\Storage::url($path)
+            ]);
+        }
+
+        return response()->json(['ok' => false, 'message' => 'Gagal menangkap file']);
     }
 }
 
