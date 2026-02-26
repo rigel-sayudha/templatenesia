@@ -17,4 +17,13 @@ class Voucher extends Model
         'end_date',
         'is_active',
     ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+        'value' => 'integer',
+        'usage_count' => 'integer',
+        'usage_limit' => 'integer',
+    ];
 }

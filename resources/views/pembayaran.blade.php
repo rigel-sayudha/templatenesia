@@ -134,7 +134,6 @@
                         </label>
                     </div>
 
-                    <!-- Bank Selection for Transfer -->
                     <div x-show="form.paymentMethod === 'transfer'" x-transition class="space-y-3 border-t pt-6" style="display: none;">
                         <h4 class="font-semibold text-slate-900 mb-3">Pilih Bank Penerima</h4>
                         
@@ -171,7 +170,6 @@
                             </div>
                         </label>
 
-                        <!-- Payment Steps -->
                         <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
                             <h5 class="font-semibold text-slate-900 mb-2">Langkah-langkah:</h5>
                             <ol class="text-sm text-slate-700 space-y-1 list-decimal list-inside">
@@ -182,7 +180,6 @@
                             </ol>
                         </div>
 
-                        <!-- Proof of Payment Upload -->
                         <div class="mt-4">
                             <label class="block text-sm font-semibold text-slate-700 mb-2">Upload Bukti Transfer (Opsional)</label>
                             <div class="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center cursor-pointer hover:border-iosBlue transition">
@@ -196,7 +193,6 @@
 
             </div>
 
-            <!-- Right Column: Order Summary -->
             <div class="lg:col-span-1">
                 <div class="bg-white rounded-xl p-6 shadow-soft border border-slate-200 sticky top-28 space-y-4">
                     <h3 class="font-heading text-lg font-bold text-slate-900">Ringkasan Pesanan</h3>

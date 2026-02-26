@@ -500,6 +500,7 @@
                 this.processCheckout();
             },
             product: {
+                id: {{ $product->id ?? 1 }},
                 name: @json($product->name ?? "Paket SOP"),
                 description: @json($product->description ?? "Admin Profile | Dukungan Lengkap | Editable"),
                 price: {{ $product->price ?? 15000 }},
@@ -544,7 +545,10 @@
                             'Accept': 'application/json',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         },
-                        body: JSON.stringify({ code: this.form.voucherCode })
+                        body: JSON.stringify({ 
+                            code: this.form.voucherCode,
+                            product_id: this.product.id 
+                        })
                     });
                     const data = await res.json();
                     if (data.ok) {
@@ -585,7 +589,7 @@
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         },
                         body: JSON.stringify({
-                            product_id: {{ $product->id ?? 1 }},
+                            product_id: this.product.id,
                             quantity: 1,
                             name: this.form.name,
                             email: this.form.email,

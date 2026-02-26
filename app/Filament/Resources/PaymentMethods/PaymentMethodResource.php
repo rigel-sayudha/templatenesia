@@ -18,7 +18,6 @@ class PaymentMethodResource extends Resource
 {
     protected static ?string $model = PaymentMethod::class;
 
-    // Ikon metode pembayaran
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCreditCard;
 
     public static function getNavigationGroup(): ?string

@@ -55,7 +55,7 @@ class CheckoutController extends Controller
         $voucherCode = $request->input('voucherCode');
         $appliedVoucher = null;
         if (!empty($voucherCode)) {
-            $voucher = \App\Models\Voucher::where('code', $voucherCode)->where('is_active', true)->first();
+            $voucher = \App\Models\Voucher::where('code', strtoupper($voucherCode))->where('is_active', true)->first();
             if ($voucher && (!$voucher->start_date || $voucher->start_date <= now()) && (!$voucher->end_date || $voucher->end_date >= now()) && (!$voucher->usage_limit || $voucher->usage_count < $voucher->usage_limit)) {
                 $appliedVoucher = $voucher;
                 if ($voucher->type === 'nominal') {
@@ -160,7 +160,7 @@ class CheckoutController extends Controller
     {
         $request->validate(['code' => 'required|string']);
         
-        $voucher = \App\Models\Voucher::where('code', $request->code)->where('is_active', true)->first();
+        $voucher = \App\Models\Voucher::where('code', strtoupper($request->code))->where('is_active', true)->first();
         if (!$voucher) {
             return response()->json(['ok' => false, 'message' => 'Voucher tidak valid atau sudah ditarik.']);
         }

@@ -85,8 +85,8 @@
                             "customer_name" => $order->customer_name,
                             "customer_email" => $order->customer_email,
                             "customer_phone" => $order->customer_phone,
-                            "payment_method" => $order->payment_method ?? "",
-                            "meta" => $order->meta ?? []
+                            "payment_method" => $order->paymentMethod->name ?? ($order->payment_method ?? "Transfer Bank"),
+                            "meta" => is_string($order->meta) ? json_decode($order->meta, true) : ($order->meta ?? [])
                         ];
                     @endphp
                     <div @click="openDetail({{ json_encode($orderPayload) }})"
@@ -235,12 +235,12 @@
                         </div>
 
                         <!-- Instruksi Pembayaran Khusus Pending -->
-                        <template x-if="selectedOrder.status === 'pending' && selectedOrder.meta && selectedOrder.meta.method">
+                        <template x-if="selectedOrder.status === 'pending' && selectedOrder.meta">
                             <div>
                                 <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Instruksi Pembayaran</h4>
                                 
                                 <!-- Jika Manual Bank -->
-                                <template x-if="selectedOrder.meta.method === 'manual'">
+                                <template x-if="selectedOrder.meta.method === 'manual' || selectedOrder.meta.bank_name">
                                     <div class="bg-blue-50/50 border border-blue-100 p-4 rounded-xl space-y-3">
                                         <div class="flex items-center gap-3 mb-2">
                                             <div class="w-10 h-10 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-iosBlue">
