@@ -19,6 +19,7 @@ class FilamentPanelProvider extends BasePanelProvider
             ->brandName('Admin')
             ->path('admin')
             ->login()
+            ->favicon('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjRzyTdfjkBugSP3Ew_vmkaeMQKl0XnZVR83kFV0LtKJXC4gVF_WTGPS57iCampIjdlGU09l_Ct0hw_2Tx51GiHj5uWr6fTYqzJirf8qpAKhwW0AsM-pYcam74_l25KpFvShEYQdkJ-UnuJQsuiP7qa7Ek85k0MWaF0X0pHGmJZ2imL8IQK9ip5M9s2sW0/s16000/Templatenesia%20Logo.jpg')
             ->discoverResources(
                 app_path('Filament/Resources'),
                 app()->getNamespace() . 'Filament\\Resources',

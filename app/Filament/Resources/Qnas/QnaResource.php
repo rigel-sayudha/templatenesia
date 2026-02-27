@@ -17,8 +17,6 @@ use Filament\Tables\Table;
 class QnaResource extends Resource
 {
     protected static ?string $model = Qna::class;
-
-    // Ikon QnA / FAQ
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedQuestionMarkCircle;
 
     public static function getNavigationGroup(): ?string
