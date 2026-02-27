@@ -239,6 +239,11 @@
         $stats = $this->getStatistics();
     @endphp
 
+    {{-- Widget Grafik Bulanan --}}
+    <div style="margin-bottom: 1.5rem;">
+        @livewire(\App\Filament\Widgets\MonthlySalesChart::class)
+    </div>
+
     {{-- Stat Cards --}}
     <div class="fi-dash-stats">
         <div class="fi-stat-card">

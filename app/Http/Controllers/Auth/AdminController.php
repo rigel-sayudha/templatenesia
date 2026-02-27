@@ -21,13 +21,13 @@ class AdminController extends Controller
             'password' => 'required|string|min:6',
         ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        if (Auth::attempt(array_merge($credentials, ['is_admin' => true]), $request->boolean('remember'))) {
             $request->session()->regenerate();
             return redirect()->intended('/admin');
         }
 
         throw ValidationException::withMessages([
-            'email' => 'Email atau password salah.',
+            'email' => 'Email/sandi keliru atau Anda tidak memiliki akses Admin.',
         ]);
     }
 

@@ -27,6 +27,15 @@ class FilamentPanelProvider extends BasePanelProvider
                 app_path('Filament/Pages'),
                 app()->getNamespace() . 'Filament\\Pages',
             )
+            ->discoverWidgets(
+                app_path('Filament/Widgets'),
+                app()->getNamespace() . 'Filament\\Widgets',
+            )
+            ->widgets([
+                \Filament\Widgets\AccountWidget::class,
+                \Filament\Widgets\FilamentInfoWidget::class,
+                \App\Filament\Widgets\MonthlySalesChart::class,
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

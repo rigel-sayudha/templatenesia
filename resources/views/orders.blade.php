@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @php
-    $isAdmin = auth()->check() && in_array(auth()->user()->email, ['admin@templatenesia.com','rigeldonovan@gmail.com']);
+    $isAdmin = auth()->check() && auth()->user()->is_admin;
 @endphp
 
 @section('title', 'Pesanan Saya - Templatenesia Official')
@@ -56,7 +56,7 @@
                             <p class="text-xs text-slate-500">Telah Masuk:</p>
                             <p class="text-sm font-bold text-slate-900 truncate" title="{{ auth()->user()->email }}">{{ auth()->user()->email }}</p>
                         </div>
-                        @if(auth()->user()->email === 'admin@templatenesia.com' || auth()->user()->email === 'rigeldonovan@gmail.com')
+                        @if(auth()->user()->is_admin)
                         <a href="/admin" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-purple-50 hover:text-iosPurple transition-colors">
                             <i class="ri-dashboard-3-line"></i> Admin Panel
                         </a>
@@ -94,7 +94,7 @@
                 </div>
             </div>
             <div class="flex flex-wrap items-center gap-3 w-full md:w-auto relative z-10">
-                @if(auth()->user()->email === 'admin@templatenesia.com' || auth()->user()->email === 'rigeldonovan@gmail.com')
+                @if(auth()->user()->is_admin)
                 <a href="/admin" class="flex-1 md:flex-none justify-center flex items-center gap-2 bg-purple-50 text-iosPurple hover:bg-purple-100 px-5 py-2.5 rounded-xl text-sm font-bold transition-all hover:shadow-sm active:scale-95">
                     <i class="ri-dashboard-3-line text-lg"></i> Admin Panel
                 </a>

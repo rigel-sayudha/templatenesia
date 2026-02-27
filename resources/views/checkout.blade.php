@@ -68,7 +68,7 @@
                             <p class="text-xs text-slate-500">Telah Masuk:</p>
                             <p class="text-sm font-bold text-slate-900 truncate" title="{{ auth()->user()->email }}">{{ auth()->user()->email }}</p>
                         </div>
-                        @if(auth()->user()->email === 'admin@templatenesia.com' || auth()->user()->email === 'rigeldonovan@gmail.com')
+                        @if(auth()->user()->is_admin)
                         <a href="/admin" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-purple-50 hover:text-iosPurple transition-colors">
                             <i class="ri-dashboard-3-line"></i> Admin Panel
                         </a>
