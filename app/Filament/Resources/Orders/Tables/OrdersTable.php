@@ -9,6 +9,8 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Filament\Actions\Action;
+use Filament\Infolists\Components\ImageEntry;
 use App\Filament\Resources\Orders\Schemas\OrderForm;
 
 class OrdersTable
@@ -36,9 +38,27 @@ class OrdersTable
                 TextColumn::make('customer_name')
                     ->label('Nama Pelanggan')
                     ->sortable(),
+                TextColumn::make('meta.method')
+                    ->label('Metode Pembayaran')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => $state ? ucfirst($state) : '-')
+                    ->color('info'),
                 ImageColumn::make('payment_proof')
                     ->label('Resi')
-                    ->circular(),
+                    ->circular()
+                    ->disk('public')
+                    ->action(
+                        Action::make('view_resi')
+                            ->modalHeading('Bukti Pembayaran')
+                            ->modalSubmitAction(false)
+                            ->modalCancelActionLabel('Tutup')
+                            ->infolist([
+                                ImageEntry::make('payment_proof')
+                                    ->hiddenLabel()
+                                    ->disk('public')
+                                    ->extraImgAttributes(['style' => 'width: 100%; max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #e2e8f0;'])
+                            ])
+                    ),
             ])
             ->filters([
                 SelectFilter::make('product_id')

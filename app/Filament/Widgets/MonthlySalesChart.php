@@ -35,13 +35,13 @@ class MonthlySalesChart extends ChartWidget
                 [
                     'label' => 'Total Penjualan Kotor (Rp)',
                     'data' => $data,
-                    'backgroundColor' => 'rgba(139, 92, 246, 0.2)', // Ungu terang transparan
-                    'borderColor' => '#8b5cf6', // iosPurple solid
+                    'backgroundColor' => 'rgba(139, 92, 246, 0.2)',
+                    'borderColor' => '#8b5cf6',
                     'fill' => true,
                     'pointBackgroundColor' => '#fff',
                     'pointBorderColor' => '#8b5cf6',
                     'pointRadius' => 4,
-                    'tension' => 0.4, // Kelenturan kurva
+                    'tension' => 0.4,
                 ],
             ],
             'labels' => $labels,

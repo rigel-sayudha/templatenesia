@@ -6,9 +6,11 @@ use Filament\Panel;
 use Filament\PanelProvider as BasePanelProvider;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Http\Middleware\Authenticate;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\HtmlString;
 
 class FilamentPanelProvider extends BasePanelProvider
 {
@@ -51,6 +53,14 @@ class FilamentPanelProvider extends BasePanelProvider
                 'Management Store',
                 'Management Website',
             ])
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn () => new HtmlString('<style>
+                    .fi-modal-window { max-height: 90vh !important; display: flex !important; flex-direction: column !important; }
+                    .fi-modal-content { overflow-y: auto !important; max-height: 70vh !important; }
+                    .fi-modal-footer { flex-shrink: 0 !important; }
+                </style>')
+            )
             ->default();
     }
 }

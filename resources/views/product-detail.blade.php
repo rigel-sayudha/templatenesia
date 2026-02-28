@@ -198,11 +198,6 @@
                         class="pb-4 font-bold transition-colors">
                     Deskripsi Lengkap
                 </button>
-                <button @click="tab = 'fitur'" 
-                        :class="tab === 'fitur' ? 'border-b-2 border-iosBlue text-iosBlue' : 'text-slate-600 hover:text-slate-900'"
-                        class="pb-4 font-bold transition-colors">
-                    Fitur & Spesifikasi
-                </button>
                 <button @click="tab = 'faq'" 
                         :class="tab === 'faq' ? 'border-b-2 border-iosBlue text-iosBlue' : 'text-slate-600 hover:text-slate-900'"
                         class="pb-4 font-bold transition-colors">
@@ -213,47 +208,6 @@
             <div x-show="tab === 'deskripsi'" x-transition class="prose max-w-none text-slate-600 leading-relaxed">
                 <p>{{ $product->description ?? 'Deskripsi produk tidak tersedia' }}</p>
                 <p>Produk ini telah dipilih oleh ribuan pengguna dan terbukti meningkatkan efisiensi kerja hingga 40%.</p>
-            </div>
-
-            <div x-show="tab === 'fitur'" x-transition class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="flex gap-4">
-                        <div class="w-12 h-12 rounded-lg bg-iosBlue/10 text-iosBlue flex items-center justify-center flex-shrink-0">
-                            <i class="ri-file-text-line"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-slate-900">Format File</h4>
-                            <p class="text-sm text-slate-600">Word (.docx), Excel (.xlsx), PDF</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4">
-                        <div class="w-12 h-12 rounded-lg bg-iosPurple/10 text-iosPurple flex items-center justify-center flex-shrink-0">
-                            <i class="ri-edit-line"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-slate-900">100% Editable</h4>
-                            <p class="text-sm text-slate-600">Sesuaikan dengan kebutuhan Anda</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4">
-                        <div class="w-12 h-12 rounded-lg bg-green-100 text-green-600 flex items-center justify-center flex-shrink-0">
-                            <i class="ri-download-line"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-slate-900">Instant Download</h4>
-                            <p class="text-sm text-slate-600">Langsung setelah pembayaran</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4">
-                        <div class="w-12 h-12 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0">
-                            <i class="ri-customer-service-2-line"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-slate-900">Support 24/7</h4>
-                            <p class="text-sm text-slate-600">Tim siap membantu kapan saja</p>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <div x-show="tab === 'faq'" x-transition class="space-y-4">
@@ -277,17 +231,9 @@
             <h2 class="font-heading text-3xl font-bold text-slate-900 mb-8">Produk Terkait</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 @foreach($relatedProducts as $related)
-                    @php
-                        $isSvg = str_starts_with($related['image'], 'data:image');
-                        $imageUrl = $isSvg ? $related['image'] : \Illuminate\Support\Facades\Storage::url($related['image']);
-                    @endphp
                     <a href="{{ route('product', ['id' => $related['id']]) }}" class="group bg-white rounded-2xl shadow-soft hover:shadow-xl border border-transparent hover:border-iosBlue transition-all duration-300 hover:-translate-y-2 cursor-pointer block no-underline overflow-hidden">
                         <div class="relative aspect-square rounded-t-2xl overflow-hidden bg-gradient-to-br from-iosBlue/10 to-iosPurple/10 flex items-center justify-center">
-                            @if($isSvg)
-                                <img src="{{ $imageUrl }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" alt="{{ $related['name'] }}">
-                            @else
-                                <img src="{{ $imageUrl }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" alt="{{ $related['name'] }}">
-                            @endif
+                            <img src="{{ $related['image'] }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" alt="{{ $related['name'] }}">
                             <div class="absolute bottom-3 left-3 bg-white/90 backdrop-blur-md text-iosBlue text-xs font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-md">
                                 <i class="fa-solid fa-star text-yellow-400 text-xs"></i> 4.9
                             </div>

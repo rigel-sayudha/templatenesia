@@ -8,9 +8,6 @@ use Illuminate\Support\Facades\Auth;
 
 class WishlistController extends Controller
 {
-    /**
-     * Memproses aksi Toggle (Tambah/Hapus) Wishlist
-     */
     public function toggle(Request $request)
     {
         $validated = $request->validate([
