@@ -301,10 +301,10 @@
                                     <td>
                                         <span class="fi-amount">Rp {{ number_format($order['total'], 0, ',', '.') }}</span>
                                     </td>
-                                    <td>{{ ucfirst($order['meta']['payment_method'] ?? '-') }}</td>
+                                    <td>{{ ucfirst($order['meta']['method'] ?? '-') }}</td>
                                     <td>
-                                        @if ($order['status'] === 'paid')
-                                            <span class="fi-badge fi-badge-paid">paid</span>
+                                        @if (in_array($order['status'], ['paid', 'processing', 'completed']))
+                                            <span class="fi-badge fi-badge-paid">{{ $order['status'] }}</span>
                                         @elseif ($order['status'] === 'pending')
                                             <span class="fi-badge fi-badge-pending">pending</span>
                                         @else

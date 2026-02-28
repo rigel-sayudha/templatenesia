@@ -12,6 +12,8 @@ use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
 use Illuminate\Support\HtmlString;
 
+use Filament\Forms\Components\Repeater;
+
 class ProductForm
 {
     public static function schema(): array
@@ -69,6 +71,40 @@ class ProductForm
                             Toggle::make('is_popular')
                                 ->label('Populer')
                                 ->default(false),
+                        ]),
+                    Wizard\Step::make('Benefits & FAQ')
+                        ->description('Keunggulan produk dan pertanyaan umum')
+                        ->icon('heroicon-o-list-bullet')
+                        ->schema([
+                            Repeater::make('benefits')
+                                ->label('Apa yang Anda Dapatkan')
+                                ->schema([
+                                    TextInput::make('text')
+                                        ->label('Benefit')
+                                        ->required()
+                                        ->placeholder('cth: File editable (Word, Excel, PDF)'),
+                                ])
+                                ->addActionLabel('+ Tambah Benefit')
+                                ->defaultItems(0)
+                                ->collapsible()
+                                ->columnSpanFull(),
+                            Repeater::make('faqs')
+                                ->label('FAQ (Pertanyaan Umum)')
+                                ->schema([
+                                    TextInput::make('question')
+                                        ->label('Pertanyaan')
+                                        ->required()
+                                        ->placeholder('cth: Apakah file bisa diedit?'),
+                                    Textarea::make('answer')
+                                        ->label('Jawaban')
+                                        ->required()
+                                        ->rows(2)
+                                        ->placeholder('cth: Ya, semua file 100% editable.'),
+                                ])
+                                ->addActionLabel('+ Tambah FAQ')
+                                ->defaultItems(0)
+                                ->collapsible()
+                                ->columnSpanFull(),
                         ]),
                 ])
                 ->submitAction(new HtmlString('<button type="submit" class="fi-btn relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus-visible:ring-2 rounded-lg fi-color-custom fi-btn-color-primary fi-color-primary fi-size-md fi-btn-size-md gap-1.5 px-3 py-2 text-sm inline-grid shadow-sm bg-custom-600 text-white hover:bg-custom-500 dark:bg-custom-500 dark:hover:bg-custom-400 focus-visible:ring-custom-500/50 dark:focus-visible:ring-custom-400/50" style="--c-400:var(--primary-400);--c-500:var(--primary-500);--c-600:var(--primary-600);">Simpan</button>'))

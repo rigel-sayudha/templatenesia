@@ -18,11 +18,15 @@ class Product extends Model
         'image',
         'is_active',
         'is_popular',
+        'benefits',
+        'faqs',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'is_popular' => 'boolean',
+        'benefits' => 'array',
+        'faqs' => 'array',
     ];
 
     /**
@@ -34,10 +38,26 @@ class Product extends Model
     }
 
     /**
-     * Get orders for this product
+     * Get reviews for this product
      */
-    public function orders()
+    public function reviews()
     {
-        return $this->hasMany(Order::class);
+        return $this->hasMany(Review::class);
+    }
+
+    /**
+     * Get average rating
+     */
+    public function getAverageRatingAttribute()
+    {
+        return round($this->reviews()->where('is_visible', true)->avg('rating') ?? 5, 1);
+    }
+
+    /**
+     * Get reviews count
+     */
+    public function getReviewsCountAttribute()
+    {
+        return $this->reviews()->where('is_visible', true)->count();
     }
 }

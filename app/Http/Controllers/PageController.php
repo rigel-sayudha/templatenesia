@@ -33,8 +33,8 @@ class PageController extends Controller
                 'category' => $p->category?->name ?? 'Produk',
                 'price' => $currentPrice,
                 'oldPrice' => $oldPrice,
-                'rating' => 4.9,
-                'sold' => '0',
+                'rating' => $p->average_rating,
+                'sold' => rand(100, 500),
                 'image' => $imageUrl,
                 'id' => $p->id,
                 'slug' => $p->slug ?? null,
@@ -87,7 +87,8 @@ class PageController extends Controller
                 'old_price' => $oldPrice,
                 'image' => $imageUrl,
                 'is_popular' => $p->is_popular ?? false,
-                'rating' => 4.9,
+                'rating' => $p->average_rating,
+                'reviews_count' => $p->reviews_count,
             ];
         })->toArray();
 
@@ -160,11 +161,14 @@ class PageController extends Controller
             'oldPrice' => $oldPrice,
             'description' => $product->description,
             'image' => $mainImageUrl,
-            'rating' => 4.9,
+            'rating' => $product->average_rating,
+            'reviews_count' => $product->reviews_count,
             'sold' => 1200,
         ] : null;
 
-        return view('product-detail', compact('product', 'relatedProducts', 'productData'));
+        $reviews = $product ? $product->reviews()->where('is_visible', true)->latest()->get() : collect();
+
+        return view('product-detail', compact('product', 'relatedProducts', 'productData', 'reviews'));
     }
 
     public function checkout()

@@ -72,7 +72,7 @@
             @endguest
         </nav>
 
-        <a href="https://wa.me/6287751299911" target="_blank" class="flex items-center gap-2 bg-slate-900 hover:bg-iosBlue text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95 absolute right-4 sm:right-6">
+        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $setting['whatsapp_number'] ?? '6287751299911') }}" target="_blank" class="flex items-center gap-2 bg-slate-900 hover:bg-iosBlue text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95 absolute right-4 sm:right-6">
             <i class="ri-whatsapp-line text-lg"></i>
             <span class="hidden sm:inline">Hubungi Admin</span>
         </a>
@@ -139,11 +139,11 @@
             <p class="text-white/80 mb-8">Tim customer service kami siap membantu Anda 24/7. Jangan ragu untuk menghubungi kami kapan saja</p>
             
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="https://wa.me/6287751299911" target="_blank" class="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-3 rounded-lg transition-all shadow-lg hover:shadow-xl">
+                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $setting['whatsapp_number'] ?? '6287751299911') }}" target="_blank" class="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-3 rounded-lg transition-all shadow-lg hover:shadow-xl">
                     <i class="fa-brands fa-whatsapp text-lg"></i>
                     <span>Chat WhatsApp</span>
                 </a>
-                <a href="mailto:info@templatenesia.com" class="flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-white font-bold px-6 py-3 rounded-lg transition-all shadow-lg hover:shadow-xl">
+                <a href="mailto:{{ $setting['email'] ?? 'info@templatenesia.com' }}" class="flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-white font-bold px-6 py-3 rounded-lg transition-all shadow-lg hover:shadow-xl">
                     <i class="ri-mail-line text-lg"></i>
                     <span>Kirim Email</span>
                 </a>
@@ -151,8 +151,6 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    @include('partials.footer')
 </div>
 
 <script>

@@ -2,10 +2,12 @@
     <div class="max-w-screen-xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-center relative">
         <!-- Logo di kiri -->
         <a href="/" class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition absolute left-4 sm:left-6">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjRzyTdfjkBugSP3Ew_vmkaeMQKl0XnZVR83kFV0LtKJXC4gVF_WTGPS57iCampIjdlGU09l_Ct0hw_2Tx51GiHj5uWr6fTYqzJirf8qpAKhwW0AsM-pYcam74_l25KpFvShEYQdkJ-UnuJQsuiP7qa7Ek85k0MWaF0X0pHGmJZ2imL8IQK9ip5M9s2sW0/s16000/Templatenesia%20Logo.jpg" 
-                 class="w-10 h-10 rounded-lg object-cover shadow-sm" alt="Templatenesia Logo">
+            <img src="{{ isset($setting['store_logo']) ? \Illuminate\Support\Facades\Storage::url($setting['store_logo']) : 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjRzyTdfjkBugSP3Ew_vmkaeMQKl0XnZVR83kFV0LtKJXC4gVF_WTGPS57iCampIjdlGU09l_Ct0hw_2Tx51GiHj5uWr6fTYqzJirf8qpAKhwW0AsM-pYcam74_l25KpFvShEYQdkJ-UnuJQsuiP7qa7Ek85k0MWaF0X0pHGmJZ2imL8IQK9ip5M9s2sW0/s16000/Templatenesia%20Logo.jpg' }}" 
+                 class="w-10 h-10 rounded-lg object-cover shadow-sm" alt="Logo">
             <div>
-                <h1 class="font-heading font-extrabold text-xl text-slate-900 leading-none">Template<span class="text-iosPurple">nesia</span>.</h1>
+                <h1 class="font-heading font-extrabold text-xl text-slate-900 leading-none">
+                    {{ $setting['store_name_prefix'] ?? 'Template' }}<span class="text-iosPurple">{{ $setting['store_name_suffix'] ?? 'nesia' }}.</span>
+                </h1>
             </div>
         </a>
 
@@ -294,10 +296,10 @@
                 <div class="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
                 <div class="relative z-10 flex flex-col items-center max-w-2xl mx-auto">
                     <div class="w-24 h-24 rounded-full border-4 border-slate-700 overflow-hidden mb-6 shadow-glow bg-slate-800">
-                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjRzyTdfjkBugSP3Ew_vmkaeMQKl0XnZVR83kFV0LtKJXC4gVF_WTGPS57iCampIjdlGU09l_Ct0hw_2Tx51GiHj5uWr6fTYqzJirf8qpAKhwW0AsM-pYcam74_l25KpFvShEYQdkJ-UnuJQsuiP7qa7Ek85k0MWaF0X0pHGmJZ2imL8IQK9ip5M9s2sW0/s16000/Templatenesia%20Logo.jpg" class="w-full h-full object-cover" alt="Profile">
+                        <img src="{{ isset($setting['store_logo']) ? \Illuminate\Support\Facades\Storage::url($setting['store_logo']) : 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjRzyTdfjkBugSP3Ew_vmkaeMQKl0XnZVR83kFV0LtKJXC4gVF_WTGPS57iCampIjdlGU09l_Ct0hw_2Tx51GiHj5uWr6fTYqzJirf8qpAKhwW0AsM-pYcam74_l25KpFvShEYQdkJ-UnuJQsuiP7qa7Ek85k0MWaF0X0pHGmJZ2imL8IQK9ip5M9s2sW0/s16000/Templatenesia%20Logo.jpg' }}" class="w-full h-full object-cover" alt="Profile">
                     </div>
-                    <h2 class="font-heading text-2xl md:text-3xl font-bold text-white mb-3 tracking-tight">PT. Templatenesia Digital Solutions</h2>
-                    <p class="text-slate-400 mb-10 text-sm leading-relaxed">Mitra terpercaya transformasi sistem manajemen perusahaan Anda. Konsultasi mudah, respon cepat, dan solusi tepat guna.</p>
+                    <h2 class="font-heading text-2xl md:text-3xl font-bold text-white mb-3 tracking-tight">{{ $setting['store_name'] ?? 'PT. Templatenesia Digital Solutions' }}</h2>
+                    <p class="text-slate-400 mb-10 text-sm leading-relaxed">{{ $setting['store_description'] ?? 'Mitra terpercaya transformasi sistem manajemen perusahaan Anda.' }}</p>
                     <div class="grid grid-cols-4 md:grid-cols-8 gap-4 w-full justify-items-center">
                         <a v-for="(soc, idx) in socials" :key="idx" :href="soc.link" class="flex flex-col items-center gap-2 group cursor-pointer w-full">
                             <div class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white text-lg group-hover:bg-iosBlue group-hover:border-iosBlue group-hover:-translate-y-1 transition-all duration-300 backdrop-blur-sm shadow-lg"><i :class="soc.icon"></i></div>
@@ -315,16 +317,13 @@
 
         createApp({
             setup() {
+                const is_string = (val) => typeof val === 'string';
                 const searchQuery = ref('');
-                const whatsappLink = "https://wa.me/{{ $whatsapp_number ?? '628123456789' }}"; 
+                const whatsappLink = "https://wa.me/{{ preg_replace('/[^0-9]/', '', $setting['whatsapp_number'] ?? '6287751299911') }}"; 
                 const activeFaq = ref(0); 
-
-                // 1. DATA PRODUK
                 const popularProducts = ref(@json($products_js ?? []));
 
                 const newProducts = ref(@json($products_js ?? []));
-
-                // Wihslist logic sync to Alpine Window Store
                 const wishlistIds = ref(JSON.parse(localStorage.getItem('wishlist') || '[]').map(i => i.id));
                 const toggleWishlist = (prod) => {
                     if (window.Alpine) {
@@ -333,7 +332,6 @@
                     }
                 };
 
-                // 2. REALTIME SEARCH LOGIC
                 const filteredPopular = computed(() => {
                     if (!searchQuery.value) return popularProducts.value;
                     return popularProducts.value.filter(item => 
@@ -378,16 +376,16 @@
                 const testimonials = ref(@json($testimonials_js) || defaultTestimonials);
                 const faqs = ref(@json($faqs_js) || defaultFaqs);
 
-                const socials = [
-                    { name: "WA", icon: "ri-whatsapp-fill", link: "#" },
+                const socialsRaw = @json($setting['social_media'] ?? null);
+                const socials = ref(is_string(socialsRaw) ? JSON.parse(socialsRaw) : (socialsRaw || [
+                    { name: "WA", icon: "ri-whatsapp-fill", link: "https://wa.me/{{ preg_replace('/[^0-9]/', '', $setting['whatsapp_number'] ?? '6287751299911') }}" },
                     { name: "FB", icon: "ri-facebook-fill", link: "#" },
                     { name: "IG", icon: "ri-instagram-fill", link: "#" },
-                    { name: "Threads", icon: "ri-threads-fill", link: "#" },
                     { name: "TikTok", icon: "ri-tiktok-fill", link: "#" },
                     { name: "YT", icon: "ri-youtube-fill", link: "#" },
-                    { name: "Tele", icon: "ri-telegram-fill", link: "#" },
-                    { name: "Email", icon: "ri-mail-fill", link: "#" },
-                ];
+                    { name: "Email", icon: "ri-mail-fill", link: "mailto:{{ $setting['email'] ?? 'info@templatenesia.com' }}" },
+                ]));
+
 
                 const formatPrice = (value) => value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                 const getInitials = (name) => name.match(/(\b\S)?/g).join("").match(/(^\S|\S$)?/g).join("").toUpperCase();

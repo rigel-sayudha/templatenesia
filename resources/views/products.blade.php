@@ -77,7 +77,7 @@
         </nav>
 
         <!-- Button di kanan -->
-        <a href="https://wa.me/6287751299911" target="_blank" class="flex items-center gap-2 bg-slate-900 hover:bg-iosBlue text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95 absolute right-4 sm:right-6">
+        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $setting['whatsapp_number'] ?? '6287751299911') }}" target="_blank" class="flex items-center gap-2 bg-slate-900 hover:bg-iosBlue text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95 absolute right-4 sm:right-6">
             <i class="ri-whatsapp-line text-lg"></i>
             <span class="hidden sm:inline">Hubungi Admin</span>
         </a>
@@ -225,6 +225,11 @@
                                 <!-- Popular Badge -->
                                 <div x-show="product.is_popular" class="absolute bottom-3 left-3 bg-white/90 backdrop-blur-md text-iosBlue text-xs font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-md">
                                     <i class="fa-solid fa-star text-yellow-400 text-xs"></i> Popular
+                                </div>
+
+                                <!-- Rating Badge -->
+                                <div class="absolute bottom-3 right-3 bg-yellow-400 text-white text-xs font-bold px-2 py-1 rounded-lg flex items-center gap-1 shadow-md z-10" v-if="product.rating">
+                                    <i class="fa-solid fa-star"></i> <span x-text="product.rating"></span>
                                 </div>
 
                                 <!-- Wishlist Button -->

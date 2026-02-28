@@ -42,17 +42,19 @@ class Dashboard extends Page
 
         $query = Order::whereBetween('created_at', [$startDate, $endDate]);
 
+        $successStatuses = ['paid', 'processing', 'completed'];
+
         $totalOrders = (clone $query)->count();
-        $manualPayments = (clone $query)->where('status', 'paid')
-            ->whereJsonContains('meta->payment_method', 'manual')
+        $manualPayments = (clone $query)->whereIn('status', $successStatuses)
+            ->whereJsonContains('meta->method', 'manual')
             ->sum('total');
-        $midtransPayments = (clone $query)->where('status', 'paid')
-            ->whereJsonContains('meta->payment_method', 'midtrans')
+        $midtransPayments = (clone $query)->whereIn('status', $successStatuses)
+            ->whereJsonContains('meta->method', 'midtrans')
             ->sum('total');
-        $totalRevenue = (clone $query)->where('status', 'paid')->sum('total');
+        $totalRevenue = (clone $query)->whereIn('status', $successStatuses)->sum('total');
 
         return [
-            'totalOrders' => $totalOrders,
+            'totalOrders' => $totalOrders ?? 0,
             'manualPayments' => $manualPayments ?? 0,
             'midtransPayments' => $midtransPayments ?? 0,
             'totalRevenue' => $totalRevenue ?? 0,

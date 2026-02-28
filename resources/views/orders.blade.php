@@ -72,7 +72,7 @@
             @endguest
         </nav>
 
-        <a href="https://wa.me/6287751299911" target="_blank" class="flex items-center gap-2 bg-slate-900 hover:bg-iosBlue text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95 absolute right-4 sm:right-6">
+        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $setting['whatsapp_number'] ?? '6287751299911') }}" target="_blank" class="flex items-center gap-2 bg-slate-900 hover:bg-iosBlue text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95 absolute right-4 sm:right-6">
             <i class="ri-whatsapp-line text-lg"></i>
             <span class="hidden sm:inline">Hubungi Admin</span>
         </a>
@@ -185,11 +185,11 @@
                         
                         <div class="w-full md:w-auto flex flex-col gap-3 min-w-[200px]" @click.stop>
                             @if($order->status === 'paid')
-                                <a href="https://wa.me/6287751299911?text={{ urlencode('Halo Admin, saya ingin mendownload produk dengan Invoice: '.$order->invoice_id) }}" target="_blank" class="w-full flex items-center justify-center gap-2 bg-iosBlue hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-full transition-all shadow-md hover:shadow-lg active:scale-95">
+                                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $setting['whatsapp_number'] ?? '6287751299911') }}?text={{ urlencode('Halo Admin, saya ingin mendownload produk dengan Invoice: '.$order->invoice_id) }}" target="_blank" class="w-full flex items-center justify-center gap-2 bg-iosBlue hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-full transition-all shadow-md hover:shadow-lg active:scale-95">
                                     <i class="ri-download-cloud-2-line text-lg"></i> Akses Produk
                                 </a>
                             @else
-                                <a href="https://wa.me/6287751299911?text={{ urlencode('Halo Admin, saya ingin konfirmasi pembayaran untuk Invoice: '.$order->invoice_id) }}" target="_blank" class="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-full transition-all shadow-md hover:shadow-lg active:scale-95">
+                                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $setting['whatsapp_number'] ?? '6287751299911') }}?text={{ urlencode('Halo Admin, saya ingin konfirmasi pembayaran untuk Invoice: '.$order->invoice_id) }}" target="_blank" class="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-full transition-all shadow-md hover:shadow-lg active:scale-95">
                                     <i class="ri-whatsapp-line text-lg"></i> Konfirmasi Bayar
                                 </a>
                             @endif

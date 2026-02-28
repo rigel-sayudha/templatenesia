@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\AdminController;
 use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\ReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +44,7 @@ Route::get('/guide', [PageController::class, 'guide'])->name('guide');
 Route::get('/test-csrf', [\App\Http\Controllers\TestCsrfController::class, 'testCsrf']);
 Route::get('/test-livewire-modal', [\App\Http\Controllers\TestCsrfController::class, 'testLivewireModal']);
 Route::get('/product', [PageController::class, 'product'])->name('product');
+Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 Route::get('/checkout', [PageController::class, 'checkout'])->name('checkout');
 
 

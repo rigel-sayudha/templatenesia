@@ -129,6 +129,14 @@ class AppServiceProvider extends ServiceProvider
             });
         }
 
-        
+        // Share settings with all views in key-value format
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
+                $allSettings = \App\Models\Setting::all()->pluck('value', 'key')->toArray();
+                \Illuminate\Support\Facades\View::share('setting', $allSettings);
+            }
+        } catch (\Throwable $e) {
+            // Silence errors during migrations or if table doesn't exist
+        }
     }
 }

@@ -72,7 +72,7 @@
             @endguest
         </nav>
 
-        <a href="https://wa.me/6287751299911" target="_blank" class="flex items-center gap-2 bg-slate-900 hover:bg-iosBlue text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95 absolute right-4 sm:right-6">
+        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $setting['whatsapp_number'] ?? '6287751299911') }}" target="_blank" class="flex items-center gap-2 bg-slate-900 hover:bg-iosBlue text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95 absolute right-4 sm:right-6">
             <i class="ri-whatsapp-line text-lg"></i>
             <span class="hidden sm:inline">Hubungi Admin</span>
         </a>
@@ -118,8 +118,8 @@
                 <div class="flex items-center gap-4 pb-8 border-b border-slate-200">
                     <div class="flex items-center gap-1">
                         <i class="fa-solid fa-star text-yellow-400"></i>
-                        <span class="font-bold text-slate-900">{{ $product->rating ?? 4.8 }}</span>
-                        <span class="text-slate-500 text-sm">({{ $product->review_count ?? 128 }} ulasan)</span>
+                        <span class="font-bold text-slate-900">{{ number_format($productData['rating'], 1) }}</span>
+                        <span class="text-slate-500 text-sm">({{ $productData['reviews_count'] }} ulasan)</span>
                     </div>
                 </div>
 
@@ -170,22 +170,21 @@
                 <div class="bg-slate-100 rounded-xl p-6 space-y-3">
                     <h3 class="font-bold text-slate-900">Apa yang Anda dapatkan:</h3>
                     <ul class="space-y-2 text-sm text-slate-600">
-                        <li class="flex items-center gap-2">
-                            <i class="ri-check-line text-green-500 font-bold"></i>
-                            File editable (Word, Excel, PDF)
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <i class="ri-check-line text-green-500 font-bold"></i>
-                            Download unlimited selamanya
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <i class="ri-check-line text-green-500 font-bold"></i>
-                            Gratis update versi terbaru
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <i class="ri-check-line text-green-500 font-bold"></i>
-                            Customer support 24/7
-                        </li>
+                        @forelse($product->benefits ?? [] as $benefit)
+                            <li class="flex items-center gap-2">
+                                <i class="ri-check-line text-green-500 font-bold"></i>
+                                {{ $benefit['text'] ?? '' }}
+                            </li>
+                        @empty
+                            <li class="flex items-center gap-2">
+                                <i class="ri-check-line text-green-500 font-bold"></i>
+                                Produk digital berkualitas tinggi
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="ri-check-line text-green-500 font-bold"></i>
+                                Customer support 24/7
+                            </li>
+                        @endforelse
                     </ul>
                 </div>
             </div>
@@ -203,6 +202,11 @@
                         class="pb-4 font-bold transition-colors">
                     FAQ
                 </button>
+                <button @click="tab = 'ulasan'" 
+                        :class="tab === 'ulasan' ? 'border-b-2 border-iosBlue text-iosBlue' : 'text-slate-600 hover:text-slate-900'"
+                        class="pb-4 font-bold transition-colors">
+                    Ulasan ({{ $productData['reviews_count'] }})
+                </button>
             </div>
 
             <div x-show="tab === 'deskripsi'" x-transition class="prose max-w-none text-slate-600 leading-relaxed">
@@ -211,18 +215,145 @@
             </div>
 
             <div x-show="tab === 'faq'" x-transition class="space-y-4">
-                <div class="bg-slate-50 p-4 rounded-lg">
-                    <h4 class="font-bold text-slate-900 mb-2">Apakah file bisa diedit?</h4>
-                    <p class="text-sm text-slate-600">Ya, semua file 100% editable. Anda dapat mengubah teks, warna, desain sesuai kebutuhan.</p>
+                @forelse($product->faqs ?? [] as $faq)
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
+                        <h4 class="font-bold text-slate-900 mb-2">{{ $faq['question'] ?? '' }}</h4>
+                        <p class="text-sm text-slate-600">{{ $faq['answer'] ?? '' }}</p>
+                    </div>
+                @empty
+                    <div class="bg-slate-50 p-4 rounded-lg">
+                        <h4 class="font-bold text-slate-900 mb-2">Belum ada FAQ</h4>
+                        <p class="text-sm text-slate-600">FAQ untuk produk ini belum ditambahkan.</p>
+                    </div>
+                @endforelse
+            </div>
+
+            <div x-show="tab === 'ulasan'" x-transition class="space-y-6">
+
+                {{-- Flash success --}}
+                @if (session('review_success'))
+                    <div class="flex items-center gap-3 bg-green-50 border border-green-200 text-green-800 px-5 py-4 rounded-xl">
+                        <i class="ri-checkbox-circle-fill text-2xl text-green-500 flex-shrink-0"></i>
+                        <p class="font-semibold text-sm">{{ session('review_success') }}</p>
+                    </div>
+                @endif
+
+                {{-- FORM BERI ULASAN --}}
+                <div class="bg-gradient-to-br from-slate-50 to-blue-50 border border-slate-200 rounded-2xl p-6"
+                     x-data="{
+                        rating: 0,
+                        hovered: 0,
+                        submitted: false,
+                        setRating(val) { this.rating = val; },
+                     }">
+                    <h3 class="font-bold text-slate-900 mb-1 text-base">Tulis Ulasan Anda</h3>
+                    <p class="text-xs text-slate-500 mb-5">Bagikan pengalaman Anda dengan produk ini kepada pembeli lain.</p>
+
+                    <form method="POST" action="{{ route('reviews.store') }}">
+                        @csrf
+                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                        <input type="hidden" name="rating" :value="rating" id="rating_input">
+
+                        {{-- Star Rating Picker --}}
+                        <div class="mb-5">
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Rating</label>
+                            <div class="flex items-center gap-2">
+                                <template x-for="star in [1,2,3,4,5]" :key="star">
+                                    <button type="button"
+                                        @click="setRating(star)"
+                                        @mouseenter="hovered = star"
+                                        @mouseleave="hovered = 0"
+                                        class="text-3xl transition-transform hover:scale-125 focus:outline-none">
+                                        <i :class="(hovered || rating) >= star ? 'fa-solid fa-star text-yellow-400' : 'fa-regular fa-star text-slate-300'"></i>
+                                    </button>
+                                </template>
+                                <span class="ml-2 text-sm font-medium text-slate-600"
+                                      x-text="rating === 0 ? 'Pilih bintang' : ['', 'Sangat Buruk', 'Buruk', 'Cukup', 'Puas', 'Sangat Puas'][rating]">
+                                </span>
+                            </div>
+                            @error('rating')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Nama (hanya untuk tamu/guest) --}}
+                        @guest
+                        <div class="mb-4">
+                            <label for="customer_name" class="block text-sm font-semibold text-slate-700 mb-1">Nama Anda</label>
+                            <input type="text" name="customer_name" id="customer_name"
+                                   value="{{ old('customer_name') }}"
+                                   class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-iosBlue focus:border-transparent outline-none transition">
+                            @error('customer_name')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        @else
+                        <div class="mb-4 flex items-center gap-2 bg-white border border-slate-200 px-4 py-2.5 rounded-lg">
+                            <div class="w-7 h-7 rounded-full bg-gradient-to-r from-iosBlue to-iosPurple flex items-center justify-center text-white text-xs font-bold">
+                                {{ substr(auth()->user()->name, 0, 1) }}
+                            </div>
+                            <span class="text-sm text-slate-700 font-medium">{{ auth()->user()->name }}</span>
+                            <span class="text-xs text-slate-400 ml-auto">(Anda sudah login)</span>
+                        </div>
+                        @endguest
+
+                        {{-- Komentar --}}
+                        <div class="mb-5">
+                            <label for="comment" class="block text-sm font-semibold text-slate-700 mb-1">Komentar</label>
+                            <textarea name="comment" id="comment" rows="4"
+                                      placeholder="Ceritakan pengalaman Anda mengenai produk ini"
+                                      class="w-full px-4 py-3 border border-slate-300 rounded-lg text-sm resize-none focus:ring-2 focus:ring-iosBlue focus:border-transparent outline-none transition">{{ old('comment') }}</textarea>
+                            @error('comment')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Submit --}}
+                        <button type="submit"
+                                :disabled="rating === 0"
+                                :class="rating === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-iosPurple hover:shadow-lg hover:-translate-y-0.5'"
+                                class="w-full bg-iosBlue text-white font-bold py-3 px-6 rounded-xl transition-all active:scale-95">
+                            <i class="ri-send-plane-fill mr-2"></i>Kirim Ulasan
+                        </button>
+                    </form>
                 </div>
-                <div class="bg-slate-50 p-4 rounded-lg">
-                    <h4 class="font-bold text-slate-900 mb-2">Berapa lama file bisa diakses?</h4>
-                    <p class="text-sm text-slate-600">Selamanya. Tidak ada batasan waktu akses atau download.</p>
+
+                {{-- DIVIDER --}}
+                @if($reviews->count() > 0)
+                <div class="flex items-center gap-3">
+                    <div class="flex-1 h-px bg-slate-200"></div>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{ $reviews->count() }} Ulasan</span>
+                    <div class="flex-1 h-px bg-slate-200"></div>
                 </div>
-                <div class="bg-slate-50 p-4 rounded-lg">
-                    <h4 class="font-bold text-slate-900 mb-2">Apakah ada update gratis?</h4>
-                    <p class="text-sm text-slate-600">Ya, semua update versi terbaru gratis untuk semua pembeli.</p>
-                </div>
+                @endif
+
+                {{-- LIST ULASAN --}}
+                @forelse($reviews as $review)
+                    <div class="pb-6 border-b border-slate-100 last:border-0">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-iosBlue/20 to-iosPurple/20 flex items-center justify-center font-bold text-slate-700 text-sm">
+                                    {{ strtoupper(substr($review->customer_name ?? $review->user?->name ?? 'U', 0, 1)) }}
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-900 text-sm">{{ $review->customer_name ?? $review->user?->name ?? 'Customer' }}</h4>
+                                    <p class="text-[10px] text-slate-400">{{ $review->created_at->diffForHumans() }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-0.5 text-yellow-400 text-sm">
+                                @for($i = 1; $i <= 5; $i++)
+                                    <i class="fa-{{ $i <= $review->rating ? 'solid' : 'regular' }} fa-star"></i>
+                                @endfor
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-600 italic leading-relaxed">"{{ $review->comment }}"</p>
+                    </div>
+                @empty
+                    <div class="text-center py-6">
+                        <i class="ri-chat-history-line text-4xl text-slate-200 mb-3 block"></i>
+                        <p class="text-slate-500 text-sm">Belum ada ulasan. Jadilah yang pertama!</p>
+                    </div>
+                @endforelse
             </div>
         </div>
 
