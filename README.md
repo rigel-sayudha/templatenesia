@@ -2,6 +2,8 @@
 
 Templatenesia adalah template toko online (e-commerce) berbasis Laravel yang dirancang untuk mempercepat pengembangan situs penjualan produk digital maupun fisik. Template ini sudah menyertakan fitur dasar seperti manajemen produk, kategori, metode pembayaran, order, serta integrasi notifikasi dan email.
 
+![Templatenesia Demo](docs/demo.webp)
+
 ## Fitur utama
 - Manajemen produk, kategori, testimonial, FAQ, dan voucher
 - Sistem pemesanan dan notifikasi (email / WhatsApp channel)
