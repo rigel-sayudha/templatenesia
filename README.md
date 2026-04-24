@@ -64,4 +64,3 @@ php artisan serve
 Project ini menggunakan lisensi MIT — lihat `LICENSE` jika tersedia.
 
 ---
-_README singkat dibuat otomatis. Ubah bagian konfigurasi/fitur sesuai kebutuhan proyek Anda._
