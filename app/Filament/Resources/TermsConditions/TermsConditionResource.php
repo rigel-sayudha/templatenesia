@@ -17,8 +17,6 @@ use Filament\Tables\Table;
 class TermsConditionResource extends Resource
 {
     protected static ?string $model = TermsCondition::class;
-
-    // Ikon syarat & ketentuan
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
     public static function getNavigationGroup(): ?string
